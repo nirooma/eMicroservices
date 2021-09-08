@@ -62,3 +62,26 @@ example-application-service-docker-image-development:
       - master
     changes:
       - services/example-application-service/**/*
+
+
+.example-application-service-deploy:
+  image: registry.gitlab.com/nirooma/fastapi-services:cicd-python3.9-slim
+  stage: deploy
+  before_script:
+    - cd services/example-application-service/
+    - pip install boto3
+  script:
+    - python deploy.py --cluster_name $ENVIRONMENT_NAME --service_name $ENVIRONMENT_NAME --new_image_uri $DOCKER_IMAGE_TAG
+
+example-application-service-development:
+  extends: .example-application-service-deploy
+  variables:
+    ENVIRONMENT_NAME: talk-booking-dev
+    APP_ENVIRONMENT_NAME: development
+    DOCKER_IMAGE_TAG: 096061951195.dkr.ecr.eu-central-1.amazonaws.com/talk-booking-dev:development-$CI_COMMIT_SHA
+  only:
+    refs:
+      - merge_requests
+      - master
+    changes:
+      - services/example-application-service/**/*
