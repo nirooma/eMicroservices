@@ -1,5 +1,6 @@
 stages:
   - docker
+  - test
 
 variables:
   DOCKER_DRIVER: overlay2
@@ -9,7 +10,7 @@ variables:
 cache:
   key: ${CI_JOB_NAME}
   paths:
-    - ${CI_PROJECT_DIR}/services/talk_booking/.venv/
+    - ${CI_PROJECT_DIR}/services/example_application/.venv/
 
 build-python-ci-image:
   image: docker:19.03.0
@@ -22,3 +23,7 @@ build-python-ci-image:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker build -t registry.gitlab.com/nirooma/fastapi-services:cicd-python3.9-slim .
     - docker push registry.gitlab.com/nirooma/fastapi-services:cicd-python3.9-slim
+
+
+include:
+  - local: /services/example_application/ci-cd.yml
