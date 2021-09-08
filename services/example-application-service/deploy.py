@@ -96,5 +96,5 @@ if __name__ == "__main__":
     )
 
     if not finished:
-        print("Did not stabilize ...")
+        print("Did not stabilize ....")
         exit(1)
