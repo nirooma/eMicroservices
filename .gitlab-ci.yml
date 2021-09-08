@@ -34,6 +34,6 @@ build-python-ci-image:
       - master
 
 include:
-  - local: /infrastructure/global/vpc/ci-cd.yml
   - local: /services/example-application-service/ci-cd.yml
+  - local: /infrastructure/global/vpc/ci-cd.yml
   - local: /infrastructure/example-application-service/ci-cd.yml
