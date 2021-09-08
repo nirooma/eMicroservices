@@ -61,7 +61,10 @@ pathspec = ">=0.9.0,<1"
 platformdirs = ">=2"
 regex = ">=2020.1.8"
 tomli = ">=0.2.6,<2.0.0"
-typing-extensions = ">=3.10.0.0"
+typing-extensions = [
+    {version = ">=3.10.0.0", markers = "python_version < \"3.10\""},
+    {version = "!=3.10.0.1", markers = "python_version >= \"3.10\""},
+]
 
 [package.extras]
 colorama = ["colorama (>=0.4.3)"]
@@ -519,8 +522,8 @@ standard = ["websockets (>=9.1)", "httptools (>=0.2.0,<0.3.0)", "watchgod (>=0.6
 
 [metadata]
 lock-version = "1.1"
-python-versions = "3.9.6"
-content-hash = "fce77a56fff0ef4ad277948af8c14da9efbbdea4c844e8b60789bce8136cdeff"
+python-versions = "^3.9"
+content-hash = "def4fa76bc4b29d54cc7e8b882bbaa23bbd4ce0f36c6b895e2f39b2ae3eda342"
 
 [metadata.files]
 asgiref = [

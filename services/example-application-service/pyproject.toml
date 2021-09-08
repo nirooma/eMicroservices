@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "example_application"
+name = "example-application-service"
 version = "0.1.0"
 description = ""
 authors = ["nirmansour <nirooma@icloud.com>"]
 
 [tool.poetry.dependencies]
-python = "3.9.7"
+python = "^3.9"
 fastapi = "^0.68.1"
 uvicorn = "^0.15.0"
 
