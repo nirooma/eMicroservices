@@ -2,7 +2,7 @@ service-example_application-quality:
   stage: test
   image: registry.gitlab.com/nirooma/fastapi-services:cicd-python3.9-slim
   before_script:
-    - cd services/example_application/
+    - cd services/example-application-service/
     - poetry install
   script:
     - poetry run flake8 .
@@ -15,13 +15,13 @@ service-example_application-quality:
       - merge_requests
       - master
     changes:
-      - services/example_application/**/*
+      - services/example-application-service/**/*
 
 service-example_application-tests:
   stage: test
   image: registry.gitlab.com/nirooma/fastapi-services:cicd-python3.9-slim
   before_script:
-    - cd services/example_application/
+    - cd services/example-application-service/
     - poetry install
   script:
     - poetry run python -m pytest --junitxml=report.xml --cov=./ --cov-report=xml tests/unit tests/integration
@@ -30,10 +30,10 @@ service-example_application-tests:
   artifacts:
     when: always
     reports:
-      junit: services/example_application/report.xml
+      junit: services/example-application-service/report.xml
   only:
     refs:
       - merge_requests
       - master
     changes:
-      - services/example_application/**/*
+      - services/example-application-service/**/*

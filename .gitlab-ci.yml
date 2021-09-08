@@ -13,7 +13,7 @@ variables:
 cache:
   key: ${CI_JOB_NAME}
   paths:
-    - ${CI_PROJECT_DIR}/services/example_application/.venv/
+    - ${CI_PROJECT_DIR}/services/example-application-service/.venv/
 
 build-python-ci-image:
   image: docker:19.03.0
@@ -34,4 +34,5 @@ build-python-ci-image:
 
 include:
   - local: /infrastructure/global/vpc/ci-cd.yml
-  - local: /services/example_application/ci-cd.yml
+  - local: /services/example-application-service/ci-cd.yml
+  - local: /infrastructure/example-application-service/ci-cd.yml

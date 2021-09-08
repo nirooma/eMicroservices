@@ -1,3 +1,22 @@
+variable "prefix" {
+  default = "genesis"
+}
+
+variable "project" {
+  default = "genesis-project"
+}
+
+variable "contact" {
+  default = "nirooma@icloud.com"
+}
+
+variable "phone" {
+  default = "+972509411117"
+}
+
+
+
+
 variable "region" {
   description = "The AWS region to create resources in."
   default     = "eu-central-1"
