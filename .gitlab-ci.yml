@@ -1,4 +1,5 @@
 stages:
+  - destroy
   - docker
   - test
   - validate
