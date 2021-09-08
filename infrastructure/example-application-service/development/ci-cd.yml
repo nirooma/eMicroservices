@@ -17,6 +17,13 @@ example-application-service-validate-development:
   variables:
     TF_ROOT: ${CI_PROJECT_DIR}/infrastructure/example-application-service/development
     TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/example-application-service-development
+  only:
+    refs:
+      - merge_requests
+      - master
+    changes:
+      - infrastructure/example-application-service/development/**/*
+      - infrastructure/modules/example-application-service/**/*
 
 .example-application-service-plan:
   image: registry.gitlab.com/gitlab-org/terraform-images/releases/0.14:v0.10.0
@@ -38,6 +45,13 @@ example-application-service-plan-development:
   variables:
     TF_ROOT: ${CI_PROJECT_DIR}/infrastructure/example-application-service/development
     TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/example-application-service-development
+  only:
+    refs:
+      - merge_requests
+      - master
+    changes:
+      - infrastructure/example-application-service/development/**/*
+      - infrastructure/modules/example-application-service/**/*
 
 .example-application-service-apply:
   image: registry.gitlab.com/gitlab-org/terraform-images/releases/0.14:v0.10.0
@@ -57,3 +71,9 @@ example-application-service-apply-development:
     TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/example-application-service-development
   dependencies:
     - example-application-service-plan-development
+  only:
+    refs:
+      - master
+    changes:
+      - infrastructure/example-application-service/development/**/*
+      - infrastructure/modules/example-application-service/**/*
