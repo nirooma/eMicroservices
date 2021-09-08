@@ -37,3 +37,28 @@ service-example_application-tests:
       - master
     changes:
       - services/example-application-service/**/*
+
+.example-application-service-docker-image:
+  image: registry.gitlab.com/nirooma/fastapi-services:cicd-docker
+  stage: docker
+  services:
+    - docker:19.03.0-dind
+  before_script:
+    - cd services/example-application-service/
+    - poetry export --without-hashes --with-credentials -f requirements.txt > requirements.txt
+    - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 096061951195.dkr.ecr.eu-central-1.amazonaws.com
+  script:
+    - docker build --pull -t "$DOCKER_IMAGE_TAG" .
+    - docker push "$DOCKER_IMAGE_TAG"
+
+
+example-application-service-docker-image-development:
+  extends: .example-application-service-docker-image
+  variables:
+    DOCKER_IMAGE_TAG: 096061951195.dkr.ecr.eu-central-1.amazonaws.com/talk-booking-dev:development-$CI_COMMIT_SHA
+  only:
+    refs:
+      - merge_requests
+      - master
+    changes:
+      - services/example-application-service/**/*
