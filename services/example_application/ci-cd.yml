@@ -1,4 +1,4 @@
-service-talk-booking-code-quality:
+service-example_application-quality:
   stage: test
   image: registry.gitlab.com/nirooma/fastapi-services:cicd-python3.9-slim
   before_script:
@@ -12,7 +12,7 @@ service-talk-booking-code-quality:
     - poetry run safety check
 
 
-service-talk-booking-tests:
+service-example_application-tests:
   stage: test
   image: registry.gitlab.com/nirooma/fastapi-services:cicd-python3.9-slim
   before_script:
