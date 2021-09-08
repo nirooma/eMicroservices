@@ -19,7 +19,6 @@ data "terraform_remote_state" "vpc" {
 
 module "example-application-service" {
   source = "../../modules/example-application-service"
-
   vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id
   ecs_security_group_id = data.terraform_remote_state.vpc.outputs.ecs_security_group_id
   load_balancer_security_group_id = data.terraform_remote_state.vpc.outputs.load_balancer_security_group_id
