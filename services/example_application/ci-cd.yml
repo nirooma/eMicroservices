@@ -10,7 +10,12 @@ service-example_application-quality:
     - poetry run isort . --check-only --profile black
     - poetry run bandit .
     - poetry run safety check
-
+  only:
+    refs:
+      - merge_requests
+      - master
+    changes:
+      - services/example_application/**/*
 
 service-example_application-tests:
   stage: test
@@ -26,3 +31,9 @@ service-example_application-tests:
     when: always
     reports:
       junit: services/example_application/report.xml
+  only:
+    refs:
+      - merge_requests
+      - master
+    changes:
+      - services/example_application/**/*

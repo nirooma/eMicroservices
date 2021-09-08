@@ -23,7 +23,11 @@ build-python-ci-image:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker build -t registry.gitlab.com/nirooma/fastapi-services:cicd-python3.9-slim .
     - docker push registry.gitlab.com/nirooma/fastapi-services:cicd-python3.9-slim
-
+  only:
+    changes:
+      - ci_cd/python/Dockerfile
+    refs:
+      - master
 
 include:
   - local: /services/example_application/ci-cd.yml
