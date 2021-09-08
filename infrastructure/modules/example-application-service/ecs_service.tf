@@ -10,7 +10,7 @@ resource "aws_ecs_task_definition" "app" {
         "gunicorn",
         "--bind",
         "0.0.0.0:${var.container_port}",
-        "web_app.main:app",
+        "app.main:app",
         "-k",
         "uvicorn.workers.UvicornWorker"
       ],
