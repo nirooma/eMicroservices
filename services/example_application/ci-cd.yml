@@ -10,3 +10,19 @@ service-talk-booking-code-quality:
     - poetry run isort . --check-only --profile black
     - poetry run bandit .
     - poetry run safety check
+
+
+service-talk-booking-tests:
+  stage: test
+  image: registry.gitlab.com/nirooma/fastapi-services:cicd-python3.9-slim
+  before_script:
+    - cd services/example_application/
+    - poetry install
+  script:
+    - poetry run python -m pytest --junitxml=report.xml --cov=./ --cov-report=xml tests/unit tests/integration
+  after_script:
+    - bash <(curl -s https://codecov.io/bash)
+  artifacts:
+    when: always
+    reports:
+      junit: services/example_application/report.xml
