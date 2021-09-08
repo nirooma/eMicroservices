@@ -17,7 +17,7 @@ data "terraform_remote_state" "vpc" {
   }
 }
 
-module "talk-booking-service" {
+module "example-application-service" {
   source = "../../modules/example-application-service"
 
   vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id
