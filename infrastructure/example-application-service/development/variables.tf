@@ -11,7 +11,7 @@ variable "contact" {
 }
 
 variable "phone" {
-  default = "+972509411117"
+  default = "+9725094111171"
 }
 
 
