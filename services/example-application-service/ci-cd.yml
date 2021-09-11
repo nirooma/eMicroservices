@@ -63,7 +63,6 @@ example-application-service-docker-image-development:
     changes:
       - services/example-application-service/**/*
 
-
 .example-application-service-deploy:
   image: registry.gitlab.com/nirooma/fastapi-services:cicd-python3.9-slim
   stage: deploy
