@@ -1,12 +1,12 @@
 import datetime
 import logging
 import platform
-
-from fastapi import FastAPI, status, Request
+from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import FastAPI, status, Request, Depends
 from fastapi.responses import JSONResponse
-
 from app.core.config import settings
-
+from app.db.session import get_session
+from app.models.user import User
 
 logger = logging.getLogger(__name__)
 
@@ -39,3 +39,13 @@ async def health_check(request: Request) -> JSONResponse:
             "AppMode": settings.APP_ENVIRONMENT
         }
     )
+
+
+@app.post("/users", response_model=User)
+async def add_user(user: User, session: AsyncSession = Depends(get_session)):
+    # user = User(username=user.username, password=user.password)
+    # session.add(user)
+    # await session.commit()
+    # await session.refresh(user)
+    # return 1
+    return {}

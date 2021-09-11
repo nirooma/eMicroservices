@@ -8,20 +8,18 @@ services:
       - POSTGRES_DB=fastapi
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+
+
+  web:
+    build: ./services/example-application-service
+    container_name: example-application-service
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+    volumes:
+      - ./services/example-application-service:/opt/ranger
     ports:
-      - "5432:5432"
-
-
-#  web:
-#    build: ./services/example-application-service
-#    container_name: fastapi
-#    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
-#    volumes:
-#      - .:/home/app/web
-#    ports:
-#      - "8000:8000"
-#    depends_on:
-#      - db
+      - "8000:8000"
+    depends_on:
+      - db
 
 volumes:
   postgres_data:

@@ -3,7 +3,9 @@ import platform
 import secrets
 from functools import lru_cache
 import enum
-from pydantic import BaseSettings
+from typing import List
+
+from pydantic import BaseSettings, AnyHttpUrl
 
 
 class AppEnvironments(enum.Enum):
@@ -18,12 +20,13 @@ class BaseConfiguration(BaseSettings):
     PROJECT_NAME: str = "Cloud Project"
     DOCKER_MODE: bool = False if platform.uname().system == "Darwin" else True
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
+    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
 
 
 class DevelopmentConfig(BaseConfiguration):
     APP_ENVIRONMENT = AppEnvironments.DEVELOPMENT.value
     DEBUG: bool = True
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/fastapi"
+    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@db:5432/fastapi"
 
 
 class ProductionConfig(BaseConfiguration):
