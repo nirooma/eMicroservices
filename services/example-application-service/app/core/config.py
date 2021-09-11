@@ -17,6 +17,7 @@ class BaseConfiguration(BaseSettings):
     SECRET_KEY: str = secrets.token_urlsafe(32)
     PROJECT_NAME: str = "Cloud Project"
     DOCKER_MODE: bool = False if platform.uname().system == "Darwin" else True
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
 
 
 class DevelopmentConfig(BaseConfiguration):
