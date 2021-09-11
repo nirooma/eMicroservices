@@ -28,7 +28,6 @@ app = get_app_configuration()
 @app.get("/health-check")
 async def health_check(request: Request) -> JSONResponse:
     """Internal use only - Do not use with a client API"""
-    print(settings.APP_ENVIRONMENT)
     logger.info(f"Health check called from IP #{request.scope.get('server')[0]}")
     return JSONResponse(
         {

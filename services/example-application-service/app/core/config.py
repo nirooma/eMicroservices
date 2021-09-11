@@ -12,24 +12,25 @@ class AppEnvironments(enum.Enum):
     TEST = "test"
 
 
-class Settings(BaseSettings):
+class BaseConfiguration(BaseSettings):
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = secrets.token_urlsafe(32)
     PROJECT_NAME: str = "Cloud Project"
     DOCKER_MODE: bool = False if platform.uname().system == "Darwin" else True
 
 
-class DevelopmentConfig(Settings):
+class DevelopmentConfig(BaseConfiguration):
     APP_ENVIRONMENT = AppEnvironments.DEVELOPMENT.value
     DEBUG: bool = True
+    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/fastapi"
 
 
-class ProductionConfig(Settings):
+class ProductionConfig(BaseConfiguration):
     APP_ENVIRONMENT = AppEnvironments.PRODUCTION.value
     DEBUG: bool = False
 
 
-class TestConfig(Settings):
+class TestConfig(BaseConfiguration):
     APP_ENVIRONMENT = AppEnvironments.TEST.value
     DEBUG: bool = True
 
