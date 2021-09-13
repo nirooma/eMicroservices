@@ -5,7 +5,7 @@ FROM python:3.9.6-slim-buster
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV WORK_DIR=/opt/ranger
+ENV WORK_DIR=/opt/donatello
 
 # set working directory
 WORKDIR $WORK_DIR

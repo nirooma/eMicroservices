@@ -12,10 +12,10 @@ services:
 
   web:
     build: ./services/example-application-service
-    container_name: example-application-service
+    container_name: backend
     command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
     volumes:
-      - ./services/example-application-service:/opt/ranger
+      - ./services/example-application-service:/opt/donatello
     ports:
       - "8000:8000"
     depends_on:
