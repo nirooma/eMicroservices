@@ -1,18 +1,13 @@
 import datetime
-import functools
 import logging
-import os
 import platform
-from types import FunctionType
-from typing import Optional
 
-from fastapi import FastAPI, status, Request, Depends
-from fastapi.responses import JSONResponse, HTMLResponse
-from pydantic import BaseModel
+from fastapi import FastAPI, Request, status
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.security import OAuth2PasswordBearer
+from fastapi.templating import Jinja2Templates
 
 from app.core.config import settings
-from fastapi.templating import Jinja2Templates
-from fastapi.security import OAuth2PasswordBearer
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +23,7 @@ def get_app_configuration():
     )
 
     from app.core.logging import configure_logging
+
     configure_logging()
 
     return application
@@ -47,7 +43,7 @@ async def health_check(request: Request) -> JSONResponse:
             "DebugMode": settings.DEBUG,
             "OperatingSystem": platform.uname(),
             "DockerMode": settings.DOCKER_MODE,
-            "AppMode": settings.APP_ENVIRONMENT
+            "AppMode": settings.APP_ENVIRONMENT,
         }
     )
 

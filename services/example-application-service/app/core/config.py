@@ -1,11 +1,11 @@
+import enum
 import os
 import platform
 import secrets
 from functools import lru_cache
-import enum
 from typing import List
 
-from pydantic import BaseSettings, AnyHttpUrl
+from pydantic import AnyHttpUrl, BaseSettings
 
 
 class AppEnvironments(enum.Enum):
@@ -48,7 +48,7 @@ def get_settings():
     config_cls = {
         "production": ProductionConfig,
         "development": DevelopmentConfig,
-        "test": TestConfig
+        "test": TestConfig,
     }
 
     return config_cls.get(os.getenv("APP_ENVIRONMENT"), DevelopmentConfig)()
