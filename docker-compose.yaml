@@ -3,6 +3,9 @@ version: '3.9'
 x-common-variables: &common-variables
    MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
    DONATELLO_SERVICE_URL: 'http://donatello:8000'
+   REDIS_URL: 'http://redis:6379'
+   RABBITMQ_URL: 'http://rabbitmq:5672'
+   APP_ENVIRONMENT: 'development'
 
 services:
   donatello-db:
@@ -46,12 +49,14 @@ services:
     build: ./services/donatello
     container_name: donatello
     command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
-    environment: *common-variables
+    environment:
+      <<: common-variables
+      DONATELLO_DATABASE_URL=postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi
     volumes:
       - ./services/donatello:/opt/donatello
     healthcheck:
       test: curl -f http://localhost:8000/health || exit 1
-      interval: 3s
+      interval: 60s
       timeout: 30s
       retries: 3
     restart: always
@@ -63,14 +68,23 @@ services:
     environment: *common-variables
     volumes:
       - ./services/michelangelo:/opt/michelangelo
-    ports:
-      - "8001:8001"
     healthcheck:
       test: curl -f http://localhost:8001/health || exit 1
-      interval: 3s
+      interval: 60s
       timeout: 30s
       retries: 3
     restart: always
+
+  splinter:
+    build:
+      context: ./services/splinter
+    command: npm run dev
+    container_name: splinter
+    environment: *common-variables
+    volumes:
+      - ./services/splinter:/opt/splinter
+    ports:
+      - "5000:3000"
 
 
 volumes:

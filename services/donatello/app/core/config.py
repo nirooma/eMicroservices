@@ -2,7 +2,6 @@ import enum
 import os
 import platform
 import secrets
-import typing
 from functools import lru_cache
 from typing import List
 
@@ -28,7 +27,7 @@ class DevelopmentConfig(BaseConfiguration):
     APP_ENVIRONMENT = AppEnvironments.DEVELOPMENT.value
     DEBUG: bool = True
     DATABASE_URL: str = os.getenv(
-        "DATABASE_URL",
+        "DONATELLO_DATABASE_URL",
         "postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi"
     )
 
