@@ -1,25 +1,77 @@
-version: '3.8'
+version: '3.9'
+
+x-common-variables: &common-variables
+   MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
+   DONATELLO_SERVICE_URL: 'http://donatello:8000'
+
 services:
-  db:
+  donatello-db:
     image: postgres:13.4-alpine
+    container_name: donatello-db
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - postgres-db-volume:/var/lib/postgresql/data/
     environment:
       - POSTGRES_DB=fastapi
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 5s
+      retries: 5
+    restart: always
 
+  redis:
+    image: redis:6.2.5
+    container_name: redis
+    healthcheck:
+      test: redis-cli ping
+      interval: 5s
+      timeout: 30s
+      retries: 50
+    restart: always
 
-  web:
-    build: ./services/example-application-service
-    container_name: backend
-    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
-    volumes:
-      - ./services/example-application-service:/opt/donatello
+  rabbitmq:
+    image: rabbitmq:3.9.4-management
+    container_name: rabbitmq
     ports:
-      - "8000:8000"
-    depends_on:
-      - db
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 30s
+      retries: 50
+    restart: always
+
+  donatello:
+    build: ./services/donatello
+    container_name: donatello
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+    environment: *common-variables
+    volumes:
+      - ./services/donatello:/opt/donatello
+    healthcheck:
+      test: curl -f http://localhost:8000/health || exit 1
+      interval: 3s
+      timeout: 30s
+      retries: 3
+    restart: always
+
+  michelangelo:
+    build: ./services/michelangelo
+    container_name: michelangelo
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8001
+    environment: *common-variables
+    volumes:
+      - ./services/michelangelo:/opt/michelangelo
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: curl -f http://localhost:8001/health || exit 1
+      interval: 3s
+      timeout: 30s
+      retries: 3
+    restart: always
+
 
 volumes:
-  postgres_data:
+  postgres-db-volume:

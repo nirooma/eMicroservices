@@ -1,6 +1,5 @@
-import uuid
 from typing import Optional
-
+from pydantic import BaseModel
 from sqlmodel import Field, SQLModel
 from datetime import datetime
 
@@ -8,7 +7,7 @@ from datetime import datetime
 class User(SQLModel, table=True):
     __tablename__ = "users"
 
-    id: uuid.UUID = Field(default=uuid.uuid4, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
     email: str = Field(primary_key=True)
     is_active: bool = Field(default=False)
     created_at: datetime = Field(default=datetime.utcnow())
@@ -16,8 +15,11 @@ class User(SQLModel, table=True):
     is_superuser: bool = Field(default=False, description="All Permissions By Default")
     first_name: Optional[str] = Field(nullable=True)
     last_name: Optional[str] = Field(nullable=True)
-    username: str
     password: str = Field(description="Hashed Password")
+    username: str
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__}({self.id})>"
 
     @property
     def full_name(self):

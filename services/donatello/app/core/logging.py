@@ -9,7 +9,7 @@ def configure_logging():
         "formatters": {
             "verbose": {
                 # "format": "[%(asctime)s: %(levelname)s] [%(pathname)s:%(lineno)d] %(message)s",
-                "format": "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(funcName)s: %(message)s",
+                "format": "%(asctime)s [%(levelname)s] [%(name)s:%(lineno)s] %(funcName)s: %(message)s",
             },
         },
         "handlers": {

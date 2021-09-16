@@ -2,6 +2,7 @@ import enum
 import os
 import platform
 import secrets
+import typing
 from functools import lru_cache
 from typing import List
 
@@ -26,7 +27,10 @@ class BaseConfiguration(BaseSettings):
 class DevelopmentConfig(BaseConfiguration):
     APP_ENVIRONMENT = AppEnvironments.DEVELOPMENT.value
     DEBUG: bool = True
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@db:5432/fastapi"
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL",
+        "postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi"
+    )
 
 
 class ProductionConfig(BaseConfiguration):

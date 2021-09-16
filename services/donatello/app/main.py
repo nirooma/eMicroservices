@@ -1,41 +1,30 @@
 import datetime
 import logging
 import platform
-
 from fastapi import FastAPI, Request, status
 from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.security import OAuth2PasswordBearer
-from fastapi.templating import Jinja2Templates
 
+from fastapi.templating import Jinja2Templates
+from app.core.logging import configure_logging
+from app.api.api_v1.api import api_router
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
 templates = Jinja2Templates(directory="app/templates")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+app = FastAPI(
+    title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json"
+)
+
+# configure_logging()
+
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
 
-def get_app_configuration():
-
-    application = FastAPI(
-        title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json"
-    )
-
-    from app.core.logging import configure_logging
-
-    configure_logging()
-
-    return application
-
-
-app = get_app_configuration()
-
-
-@app.get("/health-check")
-async def health_check(request: Request) -> JSONResponse:
+@app.get("/health")
+async def health() -> JSONResponse:
     """Internal use only - Do not use with a client API"""
-    logger.info(f"Health check called from IP #{request.scope.get('server')[0]}")
     return JSONResponse(
         {
             "Status": status.HTTP_200_OK,
