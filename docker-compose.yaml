@@ -45,10 +45,31 @@ services:
       retries: 50
     restart: always
 
+  donatello-worker:
+    build: ./services/donatello
+    container_name: donatello-worker
+    command: celery -A app.core.worker.celery worker --loglevel=info
+    environment:
+      <<: *common-variables
+    volumes:
+      - ./services/donatello:/opt/donatello
+    depends_on:
+      - donatello
+      - rabbitmq
+      - redis
+    healthcheck:
+      test: celery inspect ping -A app.core.worker.celery
+      interval: 60s
+      timeout: 30s
+      retries: 3
+    restart: always
+
   donatello:
     build: ./services/donatello
     container_name: donatello
     command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
     environment:
       <<: *common-variables
       DONATELLO_DATABASE_URL: 'postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi'
@@ -83,7 +104,7 @@ services:
     environment: *common-variables
     volumes:
       - ./services/splinter:/opt/splinter
-      - /node_modules
+      - /opt/splinter/node_modules
     ports:
       - "3000:3000"
 

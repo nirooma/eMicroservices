@@ -14,7 +14,8 @@ ENV PATH $WORK_DIR/node_modules/.bin:$PATH
 # install app dependencies
 COPY package.json .
 COPY package-lock.json .
-RUN npm install --production
+RUN npm ci
+RUN npm install react-scripts@4.0.3 --silent
 
 # copy project
 COPY . .
