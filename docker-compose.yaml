@@ -67,9 +67,9 @@ services:
   donatello:
     build: ./services/donatello
     container_name: donatello
-    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
     environment:
       <<: *common-variables
       DONATELLO_DATABASE_URL: 'postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi'

@@ -5,12 +5,12 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import HTMLResponse, JSONResponse
 
 from fastapi.templating import Jinja2Templates
-from fastapi.middleware.cors import CORSMiddleware
+
 
 from app.core.logging import configure_logging
 from app.api.api_v1.api import api_router
 from app.core.config import settings
-from app.core.services import Services
+
 
 logger = logging.getLogger(__name__)
 
@@ -23,14 +23,6 @@ app = FastAPI(
 # configure_logging()
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 @app.get("/health")
