@@ -1,10 +1,10 @@
 import os
-import time
 
 from celery import Celery
 
+from app.core.config import settings
 
 celery = Celery(__name__)
-celery.conf.broker_url = os.environ.get("RABBITMQ_URL", "amqp://localhost:5672")
-celery.conf.result_backend = os.environ.get("REDIS_URL", "redis://localhost:6379")
-celery.conf.timezone = os.getenv("DEFAULT_TIMEZONE", "Asia/Jerusalem")
+celery.conf.broker_url = settings.RABBITMQ_URL
+celery.conf.result_backend = settings.REDIS_URL
+celery.conf.timezone = settings.DEFAULT_TIMEZONE
