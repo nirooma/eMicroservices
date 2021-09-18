@@ -1,3 +1,4 @@
+import datetime
 import time
 from typing import List, Tuple
 
@@ -10,6 +11,9 @@ logger = logging.getLogger("uvicorn")
 
 
 class QueueBaseHandler:
+    EXCHANGE_NAME = "donatello"
+    EXCHANGE_TYPE = "topic"
+
     __slots__ = [
         "queues_list",
         "connection",
@@ -18,7 +22,9 @@ class QueueBaseHandler:
         "exchange_type",
         "_queues",
         "_exchange",
-        "_producer"
+        "_producer",
+        "_consumer",
+        "still_consumed"
     ]
 
     retry_policy = {
@@ -28,14 +34,16 @@ class QueueBaseHandler:
         "max_retries": 30
     }
 
-    def __init__(self, *, queue_list: List[Tuple[str, str]], exchange_name: str, exchange_type: str):
+    queue_list: List[Tuple[str, str]] = [
+        ("notifications", "notifications.*")
+    ]
+
+    def __init__(self):
         self.connection = Connection(settings.RABBITMQ_URL)
-        self.queues_list = queue_list
-        self.exchange_name = exchange_name
-        self.exchange_type = exchange_type
         self._queues = None
         self._producer = None
         self._exchange = None
+        self._consumer = None
 
     @property
     def producer(self):
@@ -46,7 +54,7 @@ class QueueBaseHandler:
     @property
     def exchange(self):
         if self._exchange is None:
-            self._exchange = Exchange(name=self.exchange_name, type=self.exchange_type)
+            self._exchange = Exchange(name=self.EXCHANGE_NAME, type=self.EXCHANGE_TYPE)
         return self._exchange
 
     @property
@@ -58,9 +66,25 @@ class QueueBaseHandler:
                     exchange=self.exchange,
                     routing_key=queue[1]
                 )
-                for queue in self.queues_list
+                for queue in self.queue_list
             ]
         return self._queues
+
+    @classmethod
+    def prepare_data(cls, task_name: str, *, task_details: dict, routing_key: str):
+        """ Must be called every time for a different message """
+        cls.data = {
+            "body": {
+                "task": task_name,
+                "timestamp": datetime.datetime.now(),
+                "details": {
+                    **task_details
+                }
+            },
+            "properties": {
+                "routing_key": routing_key
+            }
+        }
 
     def _connect(self):
         while not self.ping():
@@ -70,6 +94,7 @@ class QueueBaseHandler:
             except Exception as exc:
                 time.sleep(5)
                 logger.exception("Unable to connect to the selected queue.", exc_info=exc)
+        print(f"Connection established with host #{self.connection.host}")
 
     def _disconnect(self):
         self.connection.release()
@@ -77,11 +102,11 @@ class QueueBaseHandler:
     def ping(self):
         return self.connection.connected
 
-    def publish(self, data: dict, routing_key: str):
+    def publish(self):
         self._connect()
         self.producer.publish(
-            body=data,
-            routing_key=routing_key,
+            body=self.data["body"],
+            routing_key=self.data["properties"]["routing_key"],
             exchange=self.exchange,
             retry=True,
             retry_policy=self.retry_policy,
@@ -89,3 +114,52 @@ class QueueBaseHandler:
         )
         self._disconnect()
 
+    def set_consumer(self, consumption_queue: Tuple[str, str]):
+        """
+        consumption_queue > ("queue_name", "routing_key")
+        """
+        print(consumption_queue[0], consumption_queue[1])
+        if self._consumer is None:
+            queue = Queue(
+                name=consumption_queue[0],
+                routing_key=consumption_queue[1],
+                exchange=self.exchange
+            )
+            if consumption_queue[0] not in self.queue_list:
+                self.queues.append(queue)
+            print(self.queues)
+            self._consumer = self.connection.Consumer(queues=queue)
+            print(self._consumer)
+        return self._consumer
+
+    def consume(self):
+        self._connect()
+        self._consumer.register_callback(callback)
+        if not self._consumer:
+            raise Exception("Run 'set_consumer' method first. ")
+        with self._consumer:
+            print("Waiting for a new messages...")
+            while True:
+                try:
+                    self.connection.drain_events(timeout=1)
+                except Exception as e:
+                    pass
+
+
+def callback(body, message):
+    queue_message = queue_callback_message_format(body, message)
+    print(queue_message)
+    message.ack()
+
+
+def queue_callback_message_format(body, message):
+    return {
+        "properties": {
+            "timestamp": datetime.datetime.now(),
+            "exchange": message.delivery_info.get("exchange"),
+            "routing_key": message.delivery_info.get("routing_key")
+        },
+        "task": body["task"],
+        "details": body["details"],
+        "send_to_queue_timestamp": body["timestamp"]
+    }
