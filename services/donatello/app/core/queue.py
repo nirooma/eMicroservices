@@ -118,7 +118,6 @@ class QueueBaseHandler:
         """
         consumption_queue > ("queue_name", "routing_key")
         """
-        print(consumption_queue[0], consumption_queue[1])
         if self._consumer is None:
             queue = Queue(
                 name=consumption_queue[0],
@@ -127,9 +126,7 @@ class QueueBaseHandler:
             )
             if consumption_queue[0] not in self.queue_list:
                 self.queues.append(queue)
-            print(self.queues)
             self._consumer = self.connection.Consumer(queues=queue)
-            print(self._consumer)
         return self._consumer
 
     def consume(self):
