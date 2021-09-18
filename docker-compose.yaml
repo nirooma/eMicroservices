@@ -108,6 +108,14 @@ services:
     ports:
       - "3000:3000"
 
+  kimberly:
+    build:
+      context: ./workers/kimberly
+    command: python main.py
+    container_name: kimberly
+    environment: *common-variables
+    volumes:
+      - ./workers/kimberly:/opt/kimberly
 
 volumes:
   postgres-db-volume:

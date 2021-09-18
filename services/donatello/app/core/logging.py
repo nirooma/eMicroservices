@@ -1,36 +1,37 @@
-import logging
 import logging.config
 
-
-def configure_logging():
-    logging_dict = {
-        "version": 1,
-        "disable_existing_loggers": False,
-        "formatters": {
-            "verbose": {
-                # "format": "[%(asctime)s: %(levelname)s] [%(pathname)s:%(lineno)d] %(message)s",
-                "format": "%(asctime)s [%(levelname)s] [%(name)s:%(lineno)s] %(funcName)s: %(message)s",
-            },
+logging.config.dictConfig({
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            # "format": "[%(asctime)s: %(levelname)s] [%(pathname)s:%(lineno)d] %(message)s",
+            "format": "%(asctime)s [%(levelname)s] [%(name)s:%(lineno)s] %(funcName)s: %(message)s",
         },
-        "handlers": {
-            "console": {
-                "class": "logging.StreamHandler",
-                "formatter": "verbose",
-            },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
+    },
+    "loggers": {
         "root": {
             "handlers": ["console"],
-            "level": "INFO",
+            "propagate": False,
         },
-        "loggers": {
-            "project": {
-                "handlers": ["console"],
-                "propagate": False,
-            },
-            "uvicorn": {
-                "propagate": True,
-            },
+        "app": {
+            "handlers": ["console"],
+            "propagate": False,
         },
-    }
-    #
-    logging.config.dictConfig(logging_dict)
+        "uvicorn": {
+            "propagate": True,
+        },
+    },
+})
+
+
