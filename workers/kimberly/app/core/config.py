@@ -1,5 +1,8 @@
 import json
 import typing
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class ConfigManager:
@@ -25,7 +28,10 @@ class ConfigManager:
             return default_value
 
     def set(self, key: str, value: typing.Any = None):
-        self._data[key] = value
+        self.data[key] = value
         out_file = open(self.__CONFIGURATION_FILE_NAME__, "w")
+        _logger.info(f"{key!r} key successfully added to the base config file.")
         return json.dump(self.data, out_file, indent=2)
 
+
+config = ConfigManager()
