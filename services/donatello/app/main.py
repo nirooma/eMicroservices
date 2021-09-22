@@ -9,7 +9,7 @@ from fastapi.templating import Jinja2Templates
 
 from app.api.api_v1.api import api_router
 from app.core.config import settings
-
+from app.core.services import Services
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[Services.SPLINTER_SERVICE_URL],
 )
 
 

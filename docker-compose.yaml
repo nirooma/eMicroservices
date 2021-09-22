@@ -3,6 +3,7 @@ version: '3.9'
 x-common-variables: &common-variables
    MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
    DONATELLO_SERVICE_URL: 'http://donatello:8000'
+   SPLINTER_SERVICE_URL: 'http://localhost:3000'
    REDIS_URL: 'redis://redis:6379'
    RABBITMQ_URL: 'amqp://rabbitmq:5672'
    APP_ENVIRONMENT: 'development'

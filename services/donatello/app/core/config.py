@@ -9,9 +9,9 @@ from pydantic import AnyHttpUrl, BaseSettings
 
 
 class AppEnvironments(enum.Enum):
-    PRODUCTION = "production"
-    DEVELOPMENT = "development"
-    TEST = "test"
+    ePRODUCTION = "production"
+    eDEVELOPMENT = "development"
+    eTEST = "test"
 
 
 class BaseConfiguration(BaseSettings):
@@ -27,7 +27,7 @@ class BaseConfiguration(BaseSettings):
 
 
 class DevelopmentConfig(BaseConfiguration):
-    APP_ENVIRONMENT = AppEnvironments.DEVELOPMENT.value
+    APP_ENVIRONMENT = AppEnvironments.eDEVELOPMENT.value
     DEBUG: bool = True
     DATABASE_URL: str = os.getenv(
         "DONATELLO_DATABASE_URL",
@@ -36,12 +36,12 @@ class DevelopmentConfig(BaseConfiguration):
 
 
 class ProductionConfig(BaseConfiguration):
-    APP_ENVIRONMENT = AppEnvironments.PRODUCTION.value
+    APP_ENVIRONMENT = AppEnvironments.ePRODUCTION.value
     DEBUG: bool = False
 
 
 class TestConfig(BaseConfiguration):
-    APP_ENVIRONMENT = AppEnvironments.TEST.value
+    APP_ENVIRONMENT = AppEnvironments.eTEST.value
     DEBUG: bool = True
 
 
