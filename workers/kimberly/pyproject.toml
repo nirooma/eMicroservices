@@ -10,6 +10,7 @@ kombu = "^5.1.0"
 fastapi = "^0.68.1"
 boto3 = "^1.18.44"
 vonage = "^2.5.5"
+ipython = "^7.27.0"
 
 [tool.poetry.dev-dependencies]
 
