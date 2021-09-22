@@ -1,6 +1,7 @@
 import json
 import typing
 import logging
+import os
 
 _logger = logging.getLogger(__name__)
 
@@ -32,6 +33,12 @@ class ConfigManager:
         out_file = open(self.__CONFIGURATION_FILE_NAME__, "w")
         _logger.info(f"{key!r} key successfully added to the base config file.")
         return json.dump(self.data, out_file, indent=2)
+
+    def set_env(self, key: str):
+        try:
+            os.environ[key] = self.data[key]
+        except ValueError as e:
+            raise ValueError(f"{key!r} not found in 'base_config.json' file.", e)
 
 
 config = ConfigManager()
