@@ -112,7 +112,7 @@ services:
   kimberly:
     build:
       context: ./workers/kimberly
-    command: python main.py
+    command: python app/main.py
     container_name: kimberly
     environment: *common-variables
     volumes:
