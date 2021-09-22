@@ -7,6 +7,9 @@ authors = ["nirmansour <nirooma@icloud.com>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 kombu = "^5.1.0"
+fastapi = "^0.68.1"
+boto3 = "^1.18.44"
+vonage = "^2.5.5"
 
 [tool.poetry.dev-dependencies]
 

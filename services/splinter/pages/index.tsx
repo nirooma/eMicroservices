@@ -2,8 +2,17 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import {useEffect} from "react";
+import axios from "axios";
 
 const Home: NextPage = () => {
+  useEffect(() => {
+    axios.get("http://localhost:8000/health/").then(
+        res => console.log(res.data)
+    ).catch(
+        err => console.log(err)
+    )
+  })
   return (
     <div className={styles.container}>
       <Head>

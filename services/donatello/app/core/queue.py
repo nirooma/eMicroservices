@@ -45,6 +45,9 @@ class QueueBaseHandler:
         self._exchange = None
         self._consumer = None
 
+    def __repr__(self):
+        return f"<{self.__class__.__name__}({self.connection.hostname})>"
+
     @property
     def producer(self):
         if self._producer is None:
@@ -94,7 +97,6 @@ class QueueBaseHandler:
             except Exception as exc:
                 time.sleep(5)
                 logger.exception("Unable to connect to the selected queue.", exc_info=exc)
-        print(f"Connection established with host #{self.connection.host}")
 
     def _disconnect(self):
         self.connection.release()
