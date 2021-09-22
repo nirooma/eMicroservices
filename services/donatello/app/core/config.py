@@ -21,7 +21,7 @@ class BaseConfiguration(BaseSettings):
     DOCKER_MODE: bool = False if platform.uname().system == "Darwin" else True
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
-    RABBITMQ_URL = os.environ.get("RABBITMQ_URL", "amqp://localhost:5672")
+    RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://localhost:5672")
     REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379")
     DEFAULT_TIMEZONE = os.getenv("DEFAULT_TIMEZONE", "Asia/Jerusalem")
 
