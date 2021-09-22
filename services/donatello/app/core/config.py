@@ -26,7 +26,6 @@ class BaseConfiguration(BaseSettings):
     DEFAULT_TIMEZONE = os.getenv("DEFAULT_TIMEZONE", "Asia/Jerusalem")
 
 
-
 class DevelopmentConfig(BaseConfiguration):
     APP_ENVIRONMENT = AppEnvironments.eDEVELOPMENT.value
     DEBUG: bool = True
