@@ -136,13 +136,12 @@ class QueueBaseHandler:
         if not self._consumer:
             raise Exception("Run 'set_consumer' method first. ")
         with self._consumer:
-            logger.info("Waiting for a new messages...")
+            print("Waiting for a new messages...")
             while True:
                 try:
                     self.connection.drain_events(timeout=1)
                 except Exception as e:
                     pass
-
 
 def callback(body, message):
     queue_message = queue_callback_message_format(body, message)

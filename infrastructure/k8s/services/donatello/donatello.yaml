@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: donatello-deployment
+  labels:
+    app: donatello
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: donatello
+      labels:
+        app: donatello
+    spec:
+      containers:
+        - name: donatello
+          image:
+          imagePullPolicy: Always
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: donatello-deployment

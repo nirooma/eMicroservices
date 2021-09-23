@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kimberly-deployment
+  labels:
+    app: kimberly
+spec:
+  replicas: 2
+  template:
+    metadata:
+      name: kimberly
+      labels:
+        app: kimberly
+    spec:
+      containers:
+        - name: kimberly
+          image: nirooma/kube:latest
+          imagePullPolicy: Always
+          command: [ 'sh', '-c' ]
+          args: [ 'python app/main.py' ]
+          env:
+            - name: RABBITMQ_URL
+              value: amqp://rabbitmq-service:5672
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: kimberly
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: kimberly-service
+spec:
+  selector:
+    app: kimberly
+  ports:
+    - protocol: TCP
+      port: 80
+  type: NodePort
