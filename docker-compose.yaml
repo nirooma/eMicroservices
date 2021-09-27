@@ -40,6 +40,21 @@ services:
       retries: 5
     restart: always
 
+  michelangelo-db:
+    image: postgres:13.4-alpine
+    container_name: michelangelo-db
+    volumes:
+      - michelangelo-db-volume:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=fastapi
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 5s
+      retries: 5
+    restart: always
+
   redis:
     image: redis:6.2.5
     container_name: redis
@@ -104,7 +119,9 @@ services:
     build: ./services/michelangelo
     container_name: michelangelo
     command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8001
-    environment: *common-variables
+    environment:
+      <<: *common-variables
+      MICHELANGELO_DATABASE_URL: 'postgres://postgres:postgres@michelangelo-db:5432/fastapi'
     volumes:
       - ./services/michelangelo:/opt/michelangelo
     healthcheck:
@@ -113,6 +130,8 @@ services:
       timeout: 30s
       retries: 3
     restart: always
+    depends_on:
+      - michelangelo-db
 
   splinter:
     build:
@@ -166,3 +185,4 @@ services:
 volumes:
   donatello-db-volume:
   leonardo-db-volume:
+  michelangelo-db-volume:

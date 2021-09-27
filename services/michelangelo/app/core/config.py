@@ -30,7 +30,7 @@ class DevelopmentConfig(BaseConfiguration):
     APP_ENVIRONMENT = AppEnvironments.eDEVELOPMENT.value
     DEBUG: bool = True
     DATABASE_URL: str = os.getenv(
-        "DONATELLO_DATABASE_URL",
+        "MICHELANGELO_DATABASE_URL",
         "postgresql://postgres:postgres@localhost:5432/fastapi"
     )
 
