@@ -1,20 +1,35 @@
 version: '3.9'
 
 x-common-variables: &common-variables
-   MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
-   DONATELLO_SERVICE_URL: 'http://donatello:8000'
-   SPLINTER_SERVICE_URL: 'http://localhost:3000'
-   REDIS_URL: 'redis://redis:6379'
-   RABBITMQ_URL: 'amqp://rabbitmq:5672'
-   APP_ENVIRONMENT: 'development'
-   DONATELLO_DATABASE_URL: 'postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi'
+  SPLINTER_SERVICE_URL: 'http://localhost:3000'
+  DONATELLO_SERVICE_URL: 'http://donatello:8000'
+  MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
+  LEONARDO_SERVICE_URL: 'http://leonardo:8002'
+  REDIS_URL: 'redis://redis:6379'
+  RABBITMQ_URL: 'amqp://rabbitmq:5672'
+  APP_ENVIRONMENT: 'development'
 
 services:
   donatello-db:
     image: postgres:13.4-alpine
     container_name: donatello-db
     volumes:
-      - postgres-db-volume:/var/lib/postgresql/data/
+      - donatello-db-volume:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=fastapi
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 5s
+      retries: 5
+    restart: always
+
+  leonardo-db:
+    image: postgres:13.4-alpine
+    container_name: leonardo-db
+    volumes:
+      - leonardo-db-volume:/var/lib/postgresql/data/
     environment:
       - POSTGRES_DB=fastapi
       - POSTGRES_USER=postgres
@@ -53,6 +68,7 @@ services:
     command: celery -A app.core.worker.celery worker --loglevel=info
     environment:
       <<: *common-variables
+      DONATELLO_DATABASE_URL: 'postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi'
     volumes:
       - ./services/donatello:/opt/donatello
     depends_on:
@@ -74,6 +90,7 @@ services:
     command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
     environment:
       <<: *common-variables
+      DONATELLO_DATABASE_URL: 'postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi'
     volumes:
       - ./services/donatello:/opt/donatello
     healthcheck:
@@ -109,6 +126,32 @@ services:
     ports:
       - "3000:3000"
 
+  leonardo:
+    build: ./services/leonardo
+    container_name: leonardo
+    command: python manage.py runserver 0.0.0.0:8002
+    environment:
+      <<: *common-variables
+      SQL_ENGINE: django.db.backends.postgresql
+      SQL_DATABASE: fastapi
+      SQL_USER: postgres
+      SQL_PASSWORD: postgres
+      SQL_HOST: leonardo-db
+      SQL_PORT: 5432
+    depends_on:
+      - leonardo-db
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./services/leonardo:/opt/leonardo
+#    healthcheck:
+#      test: curl -f http://localhost:8001/health || exit 1
+#      interval: 60s
+#      timeout: 30s
+#      retries: 3
+#    restart: always
+
+
   kimberly:
     build:
       context: ./workers/kimberly
@@ -121,4 +164,5 @@ services:
       - rabbitmq
 
 volumes:
-  postgres-db-volume:
+  donatello-db-volume:
+  leonardo-db-volume:
