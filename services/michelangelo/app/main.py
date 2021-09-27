@@ -7,4 +7,5 @@ app = FastAPI()
 
 @app.get("/health")
 async def health(request: Request):
+
     return 200

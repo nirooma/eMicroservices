@@ -1,0 +1,31 @@
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'services/splinter/**'
+
+env:
+  DOCKER_BUILDKIT: 1
+  SPLINTER_IMAGE_NAME_IN_DOCKERHUB: ${{ secrets.SPLINTER_IMAGE_NAME_IN_DOCKERHUB }}
+
+jobs:
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v2
+
+      - name: CD to client service && Build docker
+        run: |
+          cd services/client
+          docker build --cache-from $SPLINTER_IMAGE_NAME_IN_DOCKERHUB:latest --tag $SPLINTER_IMAGE_NAME_IN_DOCKERHUB:latest --build-arg BUILDKIT_INLINE_CACHE=1 .
+      - name: Log in to docker hub
+        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Push to docker hub
+        run: docker push $SPLINTER_IMAGE_NAME_IN_DOCKERHUB
