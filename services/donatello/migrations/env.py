@@ -1,4 +1,5 @@
 import asyncio
+import os
 from logging.config import fileConfig
 
 from alembic import context
@@ -29,6 +30,11 @@ target_metadata = SQLModel.metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+
+config.set_main_option("sqlalchemy.url", os.getenv(
+        "DONATELLO_DATABASE_URL",
+        "postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi"
+    ))
 
 
 def run_migrations_offline():
