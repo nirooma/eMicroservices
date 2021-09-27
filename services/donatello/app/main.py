@@ -31,6 +31,7 @@ app.include_router(api_router, prefix=settings.API_V1_STR)
 @app.get("/health")
 async def health() -> JSONResponse:
     """Internal use only - Do not use with a client API"""
+    
     return JSONResponse(
         {
             "Status": status.HTTP_200_OK,
