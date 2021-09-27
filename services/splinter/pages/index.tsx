@@ -13,7 +13,7 @@ const Home: NextPage = () => {
         err => console.log(err)
     )
   })
-  
+
   return (
     <div className={styles.container}>
       <Head>

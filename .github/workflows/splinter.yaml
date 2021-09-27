@@ -4,6 +4,7 @@ on:
       - main
     paths:
       - 'services/splinter/**'
+      - '.github/workflows/splinter.yaml'
 
 env:
   DOCKER_BUILDKIT: 1
@@ -19,7 +20,7 @@ jobs:
 
       - name: CD to client service && Build docker
         run: |
-          cd services/client
+          cd services/splinter
           docker build --cache-from $SPLINTER_IMAGE_NAME_IN_DOCKERHUB:latest --tag $SPLINTER_IMAGE_NAME_IN_DOCKERHUB:latest --build-arg BUILDKIT_INLINE_CACHE=1 .
       - name: Log in to docker hub
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
