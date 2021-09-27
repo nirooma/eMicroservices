@@ -31,7 +31,7 @@ class DevelopmentConfig(BaseConfiguration):
     DEBUG: bool = True
     DATABASE_URL: str = os.getenv(
         "DONATELLO_DATABASE_URL",
-        "postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi"
+        "postgresql+asyncpg://postgres:postgres@localhost:5432/fastapi"
     )
 
 

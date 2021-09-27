@@ -7,6 +7,7 @@ x-common-variables: &common-variables
    REDIS_URL: 'redis://redis:6379'
    RABBITMQ_URL: 'amqp://rabbitmq:5672'
    APP_ENVIRONMENT: 'development'
+   DONATELLO_DATABASE_URL: 'postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi'
 
 services:
   donatello-db:
@@ -73,7 +74,6 @@ services:
     command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
     environment:
       <<: *common-variables
-      DONATELLO_DATABASE_URL: 'postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi'
     volumes:
       - ./services/donatello:/opt/donatello
     healthcheck:
@@ -117,6 +117,8 @@ services:
     environment: *common-variables
     volumes:
       - ./workers/kimberly:/opt/kimberly
+    depends_on:
+      - rabbitmq
 
 volumes:
   postgres-db-volume:

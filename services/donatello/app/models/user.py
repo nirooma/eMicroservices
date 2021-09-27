@@ -1,12 +1,18 @@
 from typing import Optional
-from sqlmodel import Field, SQLModel
+
+from sqlalchemy import Integer
+from sqlmodel import Field, SQLModel, Column
 from datetime import datetime
 
 
 class User(SQLModel, table=True):
     __tablename__ = "users"
 
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int = Field(
+        sa_column=Column(Integer, autoincrement=True),
+        primary_key=True,
+        index=True,
+    )
     email: str = Field(primary_key=True)
     is_active: bool = Field(default=False)
     created_at: datetime = Field(default=datetime.utcnow())

@@ -95,8 +95,8 @@ class QueueBaseHandler:
                 self.connection.connect()
                 logger.info(f"Connection established to #{self.connection.hostname}")
             except Exception as exc:
-                time.sleep(5)
                 logger.exception("Unable to connect to the selected queue.", exc_info=exc)
+                time.sleep(5)
 
     def _disconnect(self):
         self.connection.release()
