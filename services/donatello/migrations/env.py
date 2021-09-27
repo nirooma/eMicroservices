@@ -7,6 +7,7 @@ from sqlalchemy import engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlmodel import SQLModel
 
+from app.core.config import settings
 from app.models.user import User
 
 # this is the Alembic Config object, which provides
@@ -31,10 +32,7 @@ target_metadata = SQLModel.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
-config.set_main_option("sqlalchemy.url", os.getenv(
-        "DONATELLO_DATABASE_URL",
-        "postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi"
-    ))
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 
 def run_migrations_offline():
