@@ -16,6 +16,9 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
+      - uses: knowsuchagency/poetry-install@v1
+          env:
+            POETRY_VIRTUALENVS_CREATE: false
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
