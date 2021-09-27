@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: kimberly
-          image: nirooma/kube:latest
+          image: nirooma/kimberly:latest
           imagePullPolicy: Always
           command: [ 'sh', '-c' ]
           args: [ 'python app/main.py' ]
@@ -38,4 +38,3 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-  type: NodePort

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: splinter-deployment
+  labels:
+    app: splinter
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: splinter
+      labels:
+        app: splinter
+    spec:
+      containers:
+        - name: splinter
+          image: nirooma/splinter:latest
+          imagePullPolicy: Always
+          command: [ "sh", "-c" ]
+          args: [ "npm run dev" ]
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: splinter
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: splinter-service
+spec:
+  selector:
+    app: splinter
+  ports:
+    - port: 3000
+  type: NodePort

@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: donatello-postgres-deployment
+  labels:
+    app: donatello-postgres
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: donatello-postgres
+      labels:
+        app: donatello-postgres
+    spec:
+      containers:
+        - name: donatello-postgres
+          image: postgres:13.4-alpine
+          imagePullPolicy: Always
+          env:
+            - name: POSTGRES_DB
+              value: fastapi
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: donatello-postgres
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: donatello-postgres-service
+spec:
+  selector:
+    app: donatello-postgres
+  ports:
+    - port: 5432

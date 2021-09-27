@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: donatello-deployment
+  name: donatello-depl
   labels:
     app: donatello
 spec:
@@ -14,9 +14,27 @@ spec:
     spec:
       containers:
         - name: donatello
-          image:
-          imagePullPolicy: Always
+          command: ["sh", "-c"]
+          args: ["uvicorn app.main:app --workers 1 --host 0.0.0.0 --port 8000"]
+          image: nirooma/donatello:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DONATELLO_DATABASE_URL
+              value: 'postgresql+asyncpg://postgres:postgres@donatello-postgres-service:5432/fastapi'
       restartPolicy: Always
   selector:
     matchLabels:
-      app: donatello-deployment
+      app: donatello
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: donatello-svc
+spec:
+  selector:
+    app: donatello
+  ports:
+    - port: 8000
+  type: NodePort
