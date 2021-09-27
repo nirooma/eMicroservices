@@ -9,7 +9,7 @@ on:
 
 env:
   DOCKER_BUILDKIT: 1
-  DONATELLO_IMAGE_NAME_IN_DOCKERHUB: ${{ secrets.DONATELLO_IMAGE_NAME_IN_DOCKERHUB }}
+  LEONARDO_IMAGE_NAME_IN_DOCKERHUB: ${{ secrets.LEONARDO_IMAGE_NAME_IN_DOCKERHUB }}
 
 jobs:
   build:
@@ -44,7 +44,7 @@ jobs:
       - name: Docker Image Build
         run: |
           cd services/leonardo
-          docker build --cache-from $DONATELLO_IMAGE_NAME_IN_DOCKERHUB:latest --tag $DONATELLO_IMAGE_NAME_IN_DOCKERHUB:latest --build-arg BUILDKIT_INLINE_CACHE=1 .
+          docker build --cache-from $LEONARDO_IMAGE_NAME_IN_DOCKERHUB:latest --tag $LEONARDO_IMAGE_NAME_IN_DOCKERHUB:latest --build-arg BUILDKIT_INLINE_CACHE=1 .
       - name: Log in to Docker Hub
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
         env:
@@ -52,4 +52,4 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push to Docker Hub
-        run: docker push $DONATELLO_IMAGE_NAME_IN_DOCKERHUB
+        run: docker push $LEONARDO_IMAGE_NAME_IN_DOCKERHUB
