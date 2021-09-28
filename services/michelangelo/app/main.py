@@ -1,10 +1,17 @@
-import time
-from fastapi import FastAPI, Request
+import logging
 
 import psycopg2
+from fastapi import FastAPI, Request
+from app.core.logging import configure_logging
 from app.db.session import init_db
 from app.core.config import settings
 from app.urls import api_router
+
+
+logger = logging.getLogger(__name__)
+
+# init loggers at the beginning
+configure_logging()
 
 app = FastAPI(
     title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json"
@@ -18,7 +25,7 @@ async def startup_event():
     try:
         init_db(app)
     except psycopg2.Error as error:
-        print('Error', error)
+        logger.error(f"error initialize db {error=}")
 
 
 @app.get("/health")

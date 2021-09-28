@@ -1,10 +1,14 @@
 import datetime
-import os
 import time
 from typing import List, Tuple
-from core.config import config
+
 from kombu import Connection, Exchange, Queue
+
+from app.core.config import settings
 import logging
+
+from app.core.configuration_utils import config
+
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +16,6 @@ logger = logging.getLogger(__name__)
 class QueueBaseHandler:
     EXCHANGE_NAME = "donatello"
     EXCHANGE_TYPE = "topic"
-    RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://localhost:5672")
 
     __slots__ = [
         "queues_list",
@@ -39,7 +42,7 @@ class QueueBaseHandler:
     ]
 
     def __init__(self):
-        self.connection = Connection(self.RABBITMQ_URL)
+        self.connection = Connection(settings.RABBITMQ_URL)
         self._queues = None
         self._producer = None
         self._exchange = None
@@ -95,8 +98,8 @@ class QueueBaseHandler:
                 self.connection.connect()
                 logger.info(f"Connection established to #{self.connection.hostname}")
             except Exception as exc:
-                logger.exception("Unable to connect to the selected queue.", exc_info=exc)
                 time.sleep(5)
+                logger.exception("Unable to connect to the selected queue.", exc_info=exc)
 
     def _disconnect(self):
         self.connection.release()
@@ -116,26 +119,28 @@ class QueueBaseHandler:
         )
         self._disconnect()
 
-    def _set_consumer(self):
-        queue_name, routing_key = config.get("queue_name"), config.get("routing_key")
+    def set_consumer(self, consumption_queue: Tuple[str, str]):
+        """
+        consumption_queue > ("queue_name", "routing_key")
+        """
         if self._consumer is None:
             queue = Queue(
-                name=queue_name,
-                routing_key=routing_key,
+                name=consumption_queue[0],
+                routing_key=consumption_queue[1],
                 exchange=self.exchange
             )
-            if queue_name not in self.queue_list:
+            if consumption_queue[0] not in self.queue_list:
                 self.queues.append(queue)
             self._consumer = self.connection.Consumer(queues=queue)
         return self._consumer
 
     def consume(self):
         self._connect()
-        self._set_consumer()
         self._consumer.register_callback(callback)
         if not self._consumer:
             raise Exception("Run 'set_consumer' method first. ")
         with self._consumer:
+            print("Waiting for a new messages...")
             while True:
                 try:
                     self.connection.drain_events(timeout=1)
@@ -163,3 +168,9 @@ def queue_callback_message_format(body, message):
 
 
 queue = QueueBaseHandler()
+
+
+def send_task_to_queue(task_name: str, task_details: dict, routing_key: str = config.get("gRouting_key")):
+    queue.prepare_data(task_name, task_details=task_details, routing_key=routing_key)
+    queue.publish()
+    logger.info(f"task was send to the queue. {task_details=}")

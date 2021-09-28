@@ -22,8 +22,12 @@ async def create_user(user: UserIn_Pydantic) -> User:
     return await User.create(**user_data, password=security.get_password_hash(password))
 
 
-async def get_user_by_username(username: str) -> UserIn_Pydantic:
-    return await User.get(username=username).first()
+async def get_user_by_username(username: str) -> User:
+    return await User.filter(username=username).first()
+
+
+async def get_user_by_email(email: str) -> User:
+    return await User.filter(email=email).first()
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):

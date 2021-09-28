@@ -1,5 +1,11 @@
 {
+  "version": "0.1",
+  "queue_name": "notifications",
+  "routing_key": "notifications.*",
+  "gRouting_key": "notifications.generic",
   "errors": {
-    "loginError": "invalid credentials, Please try again."
-  }
+    "loginError": "Invalid credentials, Please try again.",
+    "forgotPassword": "An email will send to the account if the account is activate."
+  },
+  "defaultAnswer": "Ok"
 }

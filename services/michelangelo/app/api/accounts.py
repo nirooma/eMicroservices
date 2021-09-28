@@ -1,25 +1,26 @@
-from typing import List
-
-from fastapi import Depends, APIRouter, status, HTTPException
-from app.models.users import User_Pydantic, UserIn_Pydantic
-from app.models import User
-
+from fastapi import Depends, APIRouter, status, HTTPException, BackgroundTasks
+from app.models.users import UserIn_Pydantic
+import logging
 from app.core import security
 from app.crud import users
 from app.core.jwt import create_access_token
 from app.schemas.token import Token
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 from app.core.configuration_utils import config
+from app.utils import response
+from app.core.queue import send_task_to_queue
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register(payload:  UserIn_Pydantic):
+async def register(payload: UserIn_Pydantic, ):
     user = await users.create_user(payload)
     if not user:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail=config.get("errors")["loginError"]
         )
     print("sending some welcome email")
@@ -27,7 +28,7 @@ async def register(payload:  UserIn_Pydantic):
 
 
 @router.post('/login', status_code=status.HTTP_200_OK, response_model=Token)
-async def login(form_payload: OAuth2PasswordRequestForm = Depends()):
+async def login(form_payload: OAuth2PasswordRequestForm = Depends()) -> dict:
     user = await security.authenticate(form_payload.username, form_payload.password)
     if not user:
         raise HTTPException(
@@ -41,6 +42,14 @@ async def login(form_payload: OAuth2PasswordRequestForm = Depends()):
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.get("/users/me/", response_model=User_Pydantic)
-async def read_users_me(current_user: User = Depends(users.get_current_user)):
-    return current_user
+@router.post('/forgot_password', status_code=status.HTTP_200_OK)
+async def reset_password(email: str, background_tasks: BackgroundTasks):
+    if user := await users.get_user_by_email(email):
+        logger.info(f"Sending message to the queue with task 'send_reset_password'")
+        background_tasks.add_task(
+            send_task_to_queue,
+            task_name="send_mail.reset_password",
+            task_details={"username": user.username, "email": user.email},
+        )
+
+    return await response(config.get("errors")["forgotPassword"])
