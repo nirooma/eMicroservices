@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS "user" (
     "created_at" TIMESTAMPTZ NOT NULL  DEFAULT CURRENT_TIMESTAMP,
     "email" VARCHAR(255)  UNIQUE,
     "password" VARCHAR(255) NOT NULL,
-    "phone" VARCHAR(30) NOT NULL UNIQUE,
+    "phone" VARCHAR(30)  UNIQUE,
     "is_active" BOOL NOT NULL  DEFAULT False,
     "is_superuser" BOOL NOT NULL  DEFAULT False,
     "is_staff" BOOL NOT NULL  DEFAULT False
