@@ -7,8 +7,9 @@ from app.core.jwt import create_access_token
 from app.schemas.token import Token
 from fastapi.security import OAuth2PasswordRequestForm
 from app.core.configuration_utils import config
-from app.utils import response
+from app.utils import response, permission
 from app.core.queue import send_task_to_queue
+from fastapi import Request
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +44,7 @@ async def login(form_payload: OAuth2PasswordRequestForm = Depends()) -> dict:
 
 
 @router.post('/forgot_password', status_code=status.HTTP_200_OK)
-async def reset_password(email: str, background_tasks: BackgroundTasks):
+async def reset_password(email: str, background_tasks: BackgroundTasks, request: Request):
     if user := await users.get_user_by_email(email):
         logger.info(f"Sending message to the queue with task 'send_reset_password'")
         background_tasks.add_task(
@@ -52,4 +53,4 @@ async def reset_password(email: str, background_tasks: BackgroundTasks):
             task_details={"username": user.username, "email": user.email},
         )
 
-    return await response(config.get("errors")["forgotPassword"])
+    return response(config.get("errors")["forgotPassword"])

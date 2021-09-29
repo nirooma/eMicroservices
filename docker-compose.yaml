@@ -115,26 +115,6 @@ services:
       retries: 3
     restart: always
 
-  michelangelo:
-    build: ./services/michelangelo
-    container_name: michelangelo
-    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8001
-    environment:
-      <<: *common-variables
-      MICHELANGELO_DATABASE_URL: 'postgres://postgres:postgres@michelangelo-db:5432/fastapi'
-    volumes:
-      - ./services/michelangelo:/opt/michelangelo
-    ports:
-      - "8001:8001"
-    healthcheck:
-      test: curl -f http://localhost:8001/health || exit 1
-      interval: 60s
-      timeout: 30s
-      retries: 3
-    restart: always
-    depends_on:
-      - michelangelo-db
-
   splinter:
     build:
       context: ./services/splinter
@@ -144,8 +124,14 @@ services:
     volumes:
       - ./services/splinter:/opt/splinter
       - /opt/splinter/node_modules
-    ports:
-      - "3000:3000"
+#    ports:
+#      - "3000:3000"
+    expose:
+      - 3000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.splinter.entrypoints=web"
+      - "traefik.http.routers.splinter.rule=Host(`localhost`)"
 
   leonardo:
     build: ./services/leonardo
@@ -183,6 +169,45 @@ services:
       - ./workers/kimberly:/opt/kimberly
     depends_on:
       - rabbitmq
+
+  michelangelo:
+    build: ./services/michelangelo
+    container_name: michelangelo
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8001
+    environment:
+      <<: *common-variables
+      MICHELANGELO_DATABASE_URL: 'postgres://postgres:postgres@michelangelo-db:5432/fastapi'
+    volumes:
+      - ./services/michelangelo:/opt/michelangelo
+    expose:
+      - 8001
+    healthcheck:
+      test: curl -f http://localhost:8001/health || exit 1
+      interval: 60s
+      timeout: 30s
+      retries: 3
+    restart: always
+    depends_on:
+      - michelangelo-db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.michelangelo.entrypoints=web"
+      - "traefik.http.routers.michelangelo.rule=Host(`michelangelo.localhost`)"
+
+  traefik:
+    # The official v2 Traefik docker image
+    image: traefik:v2.5.3
+    container_name: traefik
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      - ./infrastructure/traefik/traefik.toml:/etc/traefik/traefik.toml
+      - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
   donatello-db-volume:

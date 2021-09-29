@@ -5,7 +5,8 @@
   "gRouting_key": "notifications.generic",
   "errors": {
     "loginError": "Invalid credentials, Please try again.",
-    "forgotPassword": "An email will send to the account if the account is activate."
+    "forgotPassword": "An email will send to the account if the account is activate.",
+    "permissionError": "Action not allowed with the following permissions."
   },
   "defaultAnswer": "Ok"
 }

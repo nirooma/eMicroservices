@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 
 from app.crud import users
 from app.models import User
@@ -8,5 +8,6 @@ router = APIRouter()
 
 
 @router.get("/me/", response_model=User_Pydantic)
-async def read_users_me(current_user: User = Depends(users.get_current_user)):
+async def read_users_me(request: Request, current_user: User = Depends(users.get_current_user)):
+    print(request.user)
     return current_user
