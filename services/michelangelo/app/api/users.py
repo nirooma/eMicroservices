@@ -8,6 +8,5 @@ router = APIRouter()
 
 
 @router.get("/me/", response_model=User_Pydantic)
-async def read_users_me(request: Request, current_user: User = Depends(users.get_current_user)):
-    print(request.user)
-    return current_user
+async def current_user(user: User = Depends(users.get_current_user)):
+    return user

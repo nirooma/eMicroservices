@@ -1,4 +1,6 @@
 from fastapi import Depends, APIRouter, status, HTTPException, BackgroundTasks
+
+from app.core.authentication import get_user
 from app.models.users import UserIn_Pydantic
 import logging
 from app.core import security
@@ -45,6 +47,7 @@ async def login(form_payload: OAuth2PasswordRequestForm = Depends()) -> dict:
 
 @router.post('/forgot_password', status_code=status.HTTP_200_OK)
 async def reset_password(email: str, background_tasks: BackgroundTasks, request: Request):
+    logger.info(f"user is authenticated {get_user(request)}")
     if user := await users.get_user_by_email(email):
         logger.info(f"Sending message to the queue with task 'send_reset_password'")
         background_tasks.add_task(

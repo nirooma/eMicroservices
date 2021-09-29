@@ -24,5 +24,4 @@ def create_access_token(data: Union[str, Any], expires_delta: timedelta = None) 
 def decode_access_token(token: str, *,  secret_key: str = settings.SECRET_KEY, algorithms=None) -> dict:
     if algorithms is None:
         algorithms = [ALGORITHM]
-
     return jwt.decode(token, secret_key, algorithms)
