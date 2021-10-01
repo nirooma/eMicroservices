@@ -9,7 +9,7 @@ from app.core.jwt import create_access_token
 from app.schemas.token import Token
 from fastapi.security import OAuth2PasswordRequestForm
 from app.core.configuration_utils import config
-from app.utils import response, permission
+from app.utils import response
 from app.core.queue import send_task_to_queue
 from fastapi import Request
 
@@ -26,8 +26,8 @@ async def register(payload: UserIn_Pydantic, ):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=config.get("errors")["loginError"]
         )
-    print("sending some welcome email")
-    print("sending messages to the queue.")
+    logger.info("sending some welcome email")
+    logger.info("sending messages to the queue.")
 
 
 @router.post('/login', status_code=status.HTTP_200_OK, response_model=Token)
