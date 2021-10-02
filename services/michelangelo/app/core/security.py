@@ -18,8 +18,6 @@ def get_password_hash(password: str) -> str:
 async def authenticate(username: str, password: str) -> Optional[User]:
     """ Authenticate user via username and password """
     user: User = await users.get_user_by_username(username)
-    print('sssss')
-    print(user)
     if not user:
         return
     verified_password: bool = verify_password(password, user.password)

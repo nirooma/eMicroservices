@@ -1,12 +1,11 @@
 import json
-from typing import List
 
 from fastapi import Depends, APIRouter, status, HTTPException
-from app.models.users import User_Pydantic, UserIn_Pydantic
+from app.schemas.users import User_Pydantic, UserIn_Pydantic
 from app.models import User
 
 from app.core import security
-from app.core.jwt import oauth2_scheme, ALGORITHM
+from app.core.jwt import oauth2_scheme
 from jose import JWTError, jwt
 from app.schemas.token import TokenData
 from app.core.jwt import decode_access_token
@@ -38,6 +37,10 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     )
     try:
         payload = decode_access_token(token)
+
+        if payload.get("general_use") is True:  # Use for another token encoded(reset password etc)
+            raise credentials_exception
+
         sub = json.loads(payload.get("sub"))
         username = sub["username"]
         if username is None:
@@ -51,3 +54,4 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
         raise credentials_exception
 
     return user
+

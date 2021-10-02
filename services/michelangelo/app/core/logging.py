@@ -8,7 +8,7 @@ def configure_logging():
         "disable_existing_loggers": False,
         "formatters": {
             "verbose": {
-                "format": "%(asctime)s [%(levelname)s] [%(name)s:%(lineno)s] %(funcName)s: %(message)s",
+                "format": f"%(asctime)s [%(levelname)s] [michelangelo] [%(name)s:%(lineno)s] %(funcName)s: %(message)s",
             },
         },
         "handlers": {

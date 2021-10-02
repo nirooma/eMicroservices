@@ -1,13 +1,15 @@
-from tortoise import fields, models
-from tortoise.manager import Manager
-from tortoise.contrib.pydantic import pydantic_model_creator
+import datetime
 
-# class UserManager(Manager):
-#     def get_queryset(self):
-#         return super().get_queryset()
-#
-#     def get_latest_5_objects(self):
-#         return super(UserManager, self).get_queryset().limit(5)
+from tortoise import fields, models
+from app import consts
+from app.core.jwt import create_access_token
+from typing import List
+
+from tortoise.signals import post_save
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class User(models.Model):
@@ -23,19 +25,35 @@ class User(models.Model):
     is_superuser = fields.BooleanField(default=False)
     is_staff = fields.BooleanField(default=False)
 
-    # objects = UserManager()
-
     class Meta:
         ordering = ["-id"]
 
     def __str__(self):
         return f"<{self.__class__.__name__}({self.id}, {self.username})>"
 
+    async def generate_token(self) -> str:
+        return create_access_token(
+            data={"username": self.username},
+            expires_delta=datetime.timedelta(days=consts.DEFAULT_DAYS_RESET_PASSWORD),
+            general_use=True
+        )
 
-User_Pydantic = pydantic_model_creator(User, name="User", exclude=["password"])
-UserIn_Pydantic = pydantic_model_creator(
-    User,
-    name="UserIn",
-    exclude_readonly=True,
-    exclude=["is_active", "is_superuser", "is_staff"]
-)
+
+@post_save(User)
+async def post_save_signal(
+        sender: "Type[User]",
+        instance: User,
+        created: bool,
+        using_db: "Optional[BaseDBAsyncClient]",
+        update_fields: List[str]
+):
+    """ Create an account for a new user """
+    from app.models import Account
+    if created:
+        await Account.create(
+            user=instance, has_to_change_password=False, password_changed_datetime=datetime.datetime.now()
+        )
+        logger.info(f"account has been created for user {instance.username!r}")
+
+
+

@@ -11,7 +11,12 @@ from app.api.api_v1.api import api_router
 from app.core.config import settings
 from app.core.services import Services
 
+from app.core.logging import configure_logging
+
 logger = logging.getLogger(__name__)
+
+# init loggers at the beginning
+configure_logging()
 
 templates = Jinja2Templates(directory="app/templates")
 
