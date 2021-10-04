@@ -1,9 +1,5 @@
-
 from typing import Dict
-
 from fastapi import Depends, APIRouter, status, HTTPException, BackgroundTasks
-
-from app.core.authentication import get_user
 from app.schemas.users import UserIn_Pydantic
 import logging
 from app.core import security
@@ -13,8 +9,6 @@ from app.schemas.token import Token
 from fastapi.security import OAuth2PasswordRequestForm
 from app.core.configuration_utils import config
 from app.utils import response
-from app.core.queue import send_task_to_queue
-from fastapi import Request
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +16,7 @@ router = APIRouter()
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register(payload: UserIn_Pydantic):
+async def register(payload: UserIn_Pydantic, background_tasks: BackgroundTasks):
     credentials_exception = HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=config.get("errors")["loginError"]
@@ -30,8 +24,12 @@ async def register(payload: UserIn_Pydantic):
     user = await users.create_user(payload)
     if not user:
         raise credentials_exception
-    logger.info("sending some welcome email")
-    logger.info("sending messages to the queue.")
+    await user.send_mail(
+        "welcome_email",
+        task_details={"first_name": user.first_name, "last_name": user.last_name},
+        background_tasks=background_tasks
+    )
+    logger.info(f"new account added to the dibi {user.email=}")
     return response(detail=config.get("defaultAnswer"), status_code=status.HTTP_201_CREATED)
 
 
@@ -52,13 +50,14 @@ async def login(form_payload: OAuth2PasswordRequestForm = Depends()) -> Dict[str
 
 
 @router.post('/forgot_password', status_code=status.HTTP_200_OK)
-async def reset_password(email: str, background_tasks: BackgroundTasks):
+async def reset_password(email: str, background_tasks: BackgroundTasks) -> Dict:
     if user := await users.get_user_by_email(email):
         token = await user.generate_token()
         await user.send_mail(
             task_name="reset_password",
             task_details={"token": token},
-            background_tasks=background_tasks)
+            background_tasks=background_tasks
+        )
         logger.info(f"reset password has been send to the email {email!r}")
 
     return response(config.get("errors")["forgotPassword"])

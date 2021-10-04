@@ -1,5 +1,5 @@
 import datetime
-from fastapi import BackgroundTasks, Depends
+from fastapi import BackgroundTasks
 from tortoise import fields, models
 from app import consts
 from app.core.jwt import create_access_token
@@ -39,7 +39,9 @@ class User(models.Model):
             general_use=True
         )
 
-    async def send_mail(self, task_name: str, *, task_details: Dict, background_tasks: BackgroundTasks):
+    async def send_mail(self, task_name: str, *, task_details=None, background_tasks: BackgroundTasks):
+        if task_details is None:
+            task_details = {}
         background_tasks.add_task(
             send_task_to_queue,
             task_name=f"send_mail.{task_name}",
@@ -62,6 +64,3 @@ async def post_save_signal(
             user=instance, has_to_change_password=False, password_changed_datetime=datetime.datetime.now()
         )
         logger.info(f"account has been created for user {instance.username!r}")
-
-
-

@@ -15,6 +15,12 @@ async def all_users() -> User_Pydantic:
     return await User_Pydantic.from_queryset(User.all())
 
 
+async def delete_all_users(i_know_what_im_doing=False):
+    if not i_know_what_im_doing:
+        return
+    return await User.all().delete()
+
+
 async def create_user(user: UserIn_Pydantic) -> User:
     user_data = user.dict().copy()
     password = user_data.pop("password")

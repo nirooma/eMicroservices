@@ -147,15 +147,26 @@ class QueueBaseHandler:
 
 def callback(body, message):
     queue_message = queue_callback_message_format(body, message)
-    task = queue_message["task"]
-    if task == "send_mail.reset_password":
+    prefix, task_name = queue_message["task"].split(".")
+
+    if prefix == "send_mail":
         # reset password
+        if task_name == "reset_password":
+            subject = "welcome email"
+            body = queue_message["details"]["token"]
+        # welcome email
+        elif task_name == "welcome_email":
+            subject = "welcome email"
+            body = queue_message["details"]["first_name"]
+        else:
+            print("invalid task name.")
+            return
+        # send the mail
         send_mail(
             [queue_message["details"]["email"]],
-            "just_subject",
-            queue_message["details"]["token"]
+            subject,
+            body
         )
-
     message.ack()
 
 
