@@ -173,4 +173,4 @@ queue = QueueBaseHandler()
 def send_task_to_queue(task_name: str, task_details: dict, routing_key: str = config.get("gRouting_key")):
     queue.prepare_data(task_name, task_details=task_details, routing_key=routing_key)
     queue.publish()
-    logger.info(f"task was send to the queue. {task_details=}")
+    logger.info(f"task {task_name!r}was send to the queue")

@@ -165,6 +165,8 @@ services:
     command: python app/main.py
     container_name: kimberly
     environment: *common-variables
+    env_file:
+      - "/Users/nirmansour/.pems/eMicroservices.txt"
     volumes:
       - ./workers/kimberly:/opt/kimberly
     depends_on:

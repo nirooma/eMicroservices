@@ -6,6 +6,8 @@ from core.config import config
 from kombu import Connection, Exchange, Queue
 import logging
 
+from external_services.ses import send_mail
+
 logger = logging.getLogger(__name__)
 
 
@@ -145,7 +147,15 @@ class QueueBaseHandler:
 
 def callback(body, message):
     queue_message = queue_callback_message_format(body, message)
-    print(queue_message)
+    task = queue_message["task"]
+    if task == "send_mail.reset_password":
+        # reset password
+        send_mail(
+            [queue_message["details"]["email"]],
+            "just_subject",
+            queue_message["details"]["token"]
+        )
+
     message.ack()
 
 
