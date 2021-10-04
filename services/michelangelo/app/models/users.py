@@ -1,13 +1,14 @@
 import datetime
-
+from fastapi import BackgroundTasks, Depends
 from tortoise import fields, models
 from app import consts
 from app.core.jwt import create_access_token
-from typing import List
+from typing import List, Dict
 
 from tortoise.signals import post_save
 import logging
 
+from app.core.queue import send_task_to_queue
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,13 @@ class User(models.Model):
             data={"username": self.username},
             expires_delta=datetime.timedelta(days=consts.DEFAULT_DAYS_RESET_PASSWORD),
             general_use=True
+        )
+
+    async def send_mail(self, task_name: str, *, task_details: Dict, background_tasks: BackgroundTasks):
+        background_tasks.add_task(
+            send_task_to_queue,
+            task_name=f"send_mail.{task_name}",
+            task_details={"username": self.username, "email": self.email, **task_details},
         )
 
 

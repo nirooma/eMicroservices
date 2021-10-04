@@ -55,11 +55,10 @@ async def login(form_payload: OAuth2PasswordRequestForm = Depends()) -> Dict[str
 async def reset_password(email: str, background_tasks: BackgroundTasks):
     if user := await users.get_user_by_email(email):
         token = await user.generate_token()
-        background_tasks.add_task(
-            send_task_to_queue,
-            task_name="send_mail.reset_password",
-            task_details={"username": user.username, "email": user.email, "token": token},
-        )
+        await user.send_mail(
+            task_name="reset_password",
+            task_details={"token": token},
+            background_tasks=background_tasks)
         logger.info(f"reset password has been send to the email {email!r}")
 
     return response(config.get("errors")["forgotPassword"])
