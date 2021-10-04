@@ -3,7 +3,6 @@ from typing import List
 
 from fastapi import APIRouter, Depends
 from starlette import status
-from starlette.requests import Request
 from starlette.responses import Response
 
 from app.crud import users
