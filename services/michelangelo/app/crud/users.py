@@ -1,14 +1,18 @@
 import json
+import logging
+from functools import lru_cache
 
-from fastapi import Depends, APIRouter, status, HTTPException
+from fastapi import Depends, status, HTTPException
 from app.schemas.users import User_Pydantic, UserIn_Pydantic
 from app.models import User
 
 from app.core import security
 from app.core.jwt import oauth2_scheme
-from jose import JWTError, jwt
+from jose import JWTError
 from app.schemas.token import TokenData
 from app.core.jwt import decode_access_token
+
+logger = logging.getLogger(__name__)
 
 
 async def all_users() -> User_Pydantic:
@@ -61,3 +65,16 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
 
     return user
 
+
+async def create_system_user():
+    user = await get_user_by_username("admin")
+    if not user:
+        user = await User.create(
+            username="admin",
+            password=security.get_password_hash("admin"),
+            is_superuser=True,
+            email="admin@admin",
+            phone="000000"
+        )
+    logger.info("system user has created to the dibi.")
+    return user

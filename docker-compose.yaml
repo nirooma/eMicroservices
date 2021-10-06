@@ -180,8 +180,9 @@ services:
       MICHELANGELO_DATABASE_URL: 'postgres://postgres:postgres@michelangelo-db:5432/fastapi'
     volumes:
       - ./services/michelangelo:/opt/michelangelo
-#    ports:
-#      - "8001:8001"
+    ports:
+      - "8001:8001"
+    entrypoint: ./entrypoint
     healthcheck:
       test: curl -f http://localhost:8001/health || exit 1
       interval: 60s

@@ -3,7 +3,7 @@ from fastapi import status
 from app.core.configuration_utils import config
 
 
-def response(
+def _response(
         detail=config.get("defaultAnswer"),
         status_code=status.HTTP_200_OK,
         **kwargs

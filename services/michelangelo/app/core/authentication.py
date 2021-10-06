@@ -33,22 +33,22 @@ def get_user(request: Request):
 
 
 class BearerAuthBackend(AuthenticationBackend):
-    async def authenticate(self, request):
-        if "Authorization" not in request.headers:
+    async def authenticate(self, request: Request):
+        permissions = []
+        if "Authorization" not in request.headers and not request.cookies.get("session"):
             return
 
-        auth = request.headers["Authorization"]
-        try:
-            scheme, credentials = auth.split()
-            if scheme.lower() != 'bearer':
-                return
-            user: User = await get_current_user(token=credentials)
+        credentials = request.cookies.get("session") or request.headers["Authorization"].split()[1]
+        user: User = await get_current_user(token=credentials)
+        if not user:
+            return
+        if user.is_superuser:
+            permissions.append("is_superuser")
+        if user.is_staff:
+            permissions.append("is_staff")
 
-        except (ValueError, UnicodeDecodeError, binascii.Error) as exc:
-            raise AuthenticationError('Invalid basic auth credentials')
-
-        # TODO: You'd want to verify the username and password here.
-        return AuthCredentials(["authenticated"]), SimpleUser(user)
+        permissions.append("authenticated")
+        return AuthCredentials(permissions), SimpleUser(user)
 
 
 middleware = [
