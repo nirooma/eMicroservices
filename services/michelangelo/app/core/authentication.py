@@ -29,7 +29,8 @@ class SimpleUser(BaseUser):
 
 
 def get_user(request: Request):
-    return request.user.user
+    if request.user.is_authenticated:
+        return request.user.user
 
 
 class BearerAuthBackend(AuthenticationBackend):
