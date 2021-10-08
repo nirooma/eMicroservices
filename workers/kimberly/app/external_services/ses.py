@@ -40,11 +40,11 @@ def send_mail(recipients: List[str], subject: str, data: str = "TEST"):
             },
             Source="nirooma@icloud.com",
         )
-        print(f"email sent to {recipients=} with status code {response['ResponseMetadata']['HTTPStatusCode']}")
+        logger.info(f"Email sent to {recipients=} with status code {response['ResponseMetadata']['HTTPStatusCode']}")
         return response
 
     except Exception as e:
-        print(f"Couldn't send email to {recipients=}")
+        logger.exception(f"Couldn't send email to {recipients=}", exc_info=e)
         return False
 
 

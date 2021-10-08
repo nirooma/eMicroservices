@@ -1,5 +1,6 @@
 import datetime
 import os
+import sys
 import time
 from typing import List, Tuple
 from core.config import config
@@ -97,7 +98,7 @@ class QueueBaseHandler:
                 self.connection.connect()
                 logger.info(f"Connection established to #{self.connection.hostname}")
             except Exception as exc:
-                logger.exception("Unable to connect to the selected queue.", exc_info=exc)
+                logger.critical("Unable to connect to the selected queue.", exc_info=exc)
                 time.sleep(5)
 
     def _disconnect(self):
@@ -137,6 +138,8 @@ class QueueBaseHandler:
         self._consumer.register_callback(callback)
         if not self._consumer:
             raise Exception("Run 'set_consumer' method first. ")
+
+        logging.info("Kimberly worker is running, ready to accept connections.")
         with self._consumer:
             while True:
                 try:
@@ -144,10 +147,15 @@ class QueueBaseHandler:
                 except Exception as e:
                     pass
 
+                time.sleep(2)
+
 
 def callback(body, message):
     queue_message = queue_callback_message_format(body, message)
     prefix, task_name = queue_message["task"].split(".")
+
+    logger.info(f"Getting message from the queue, {prefix=}, {task_name=}")
+    logger.debug(f"Message details {queue_message=}")
 
     if prefix == "send_mail":
         # reset password
@@ -159,7 +167,7 @@ def callback(body, message):
             subject = "welcome email"
             body = queue_message["details"]["first_name"]
         else:
-            print("invalid task name.")
+            logging.error("invalid task name.")
             return
         # send the mail
         send_mail(

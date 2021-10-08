@@ -6,7 +6,8 @@ x-common-variables: &common-variables
   MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
   LEONARDO_SERVICE_URL: 'http://leonardo:8002'
   REDIS_URL: 'redis://redis:6379'
-  RABBITMQ_URL: 'amqp://rabbitmq:5672'
+#  RABBITMQ_URL: 'amqp://rabbitmq:5672'
+  RABBITMQ_URL: 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
   APP_ENVIRONMENT: 'development'
 
 services:

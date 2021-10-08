@@ -40,6 +40,14 @@ python-versions = ">=3.6"
 vine = "5.0.0"
 
 [[package]]
+name = "appdirs"
+version = "1.4.4"
+description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "appnope"
 version = "0.1.2"
 description = "Disable App Nap on macOS >= 10.9"
@@ -452,6 +460,24 @@ optional = false
 python-versions = ">=3.6"
 
 [[package]]
+name = "ptpython"
+version = "3.0.20"
+description = "Python REPL build on top of prompt_toolkit"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+appdirs = "*"
+jedi = ">=0.16.0"
+prompt-toolkit = ">=3.0.18,<3.1.0"
+pygments = "*"
+
+[package.extras]
+all = ["black"]
+ptipython = ["ipython"]
+
+[[package]]
 name = "ptyprocess"
 version = "0.7.0"
 description = "Run a subprocess in a pseudo terminal"
@@ -637,6 +663,19 @@ optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
+name = "tortoise-cli"
+version = "0.1.1"
+description = "A cli tool for tortoise-orm, build on top of click and ptpython."
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
+
+[package.dependencies]
+click = "*"
+ptpython = "*"
+tortoise-orm = "*"
+
+[[package]]
 name = "tortoise-orm"
 version = "0.17.7"
 description = "Easy async ORM for python, built with relations in mind"
@@ -723,7 +762,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "2c3e2e6c47b4a89f0c3b3c05ab9931f4de23fce07df4b76dce5e14f00206c590"
+content-hash = "68f70102a630e20ef5fd5122ced75012d2efc91e6cfd5151bc8bfaf6b2ae4f2e"
 
 [metadata.files]
 aerich = [
@@ -737,6 +776,10 @@ aiosqlite = [
 amqp = [
     {file = "amqp-5.0.6-py3-none-any.whl", hash = "sha256:493a2ac6788ce270a2f6a765b017299f60c1998f5a8617908ee9be082f7300fb"},
     {file = "amqp-5.0.6.tar.gz", hash = "sha256:03e16e94f2b34c31f8bf1206d8ddd3ccaa4c315f7f6a1879b7b1210d229568c2"},
+]
+appdirs = [
+    {file = "appdirs-1.4.4-py2.py3-none-any.whl", hash = "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"},
+    {file = "appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
 ]
 appnope = [
     {file = "appnope-0.1.2-py2.py3-none-any.whl", hash = "sha256:93aa393e9d6c54c5cd570ccadd8edad61ea0c4b9ea7a01409020c9aa019eb442"},
@@ -960,6 +1003,10 @@ psycopg2-binary = [
     {file = "psycopg2_binary-2.9.1-cp39-cp39-win32.whl", hash = "sha256:0b7dae87f0b729922e06f85f667de7bf16455d411971b2043bbd9577af9d1975"},
     {file = "psycopg2_binary-2.9.1-cp39-cp39-win_amd64.whl", hash = "sha256:b4d7679a08fea64573c969f6994a2631908bb2c0e69a7235648642f3d2e39a68"},
 ]
+ptpython = [
+    {file = "ptpython-3.0.20-py2.py3-none-any.whl", hash = "sha256:99636899ab0e4d026e2ecc9368269114f387b4bb5411e57f072b0bde724d9f99"},
+    {file = "ptpython-3.0.20.tar.gz", hash = "sha256:eafd4ced27ca5dc370881d4358d1ab5041b32d88d31af8e3c24167fe4af64ed6"},
+]
 ptyprocess = [
     {file = "ptyprocess-0.7.0-py2.py3-none-any.whl", hash = "sha256:4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35"},
     {file = "ptyprocess-0.7.0.tar.gz", hash = "sha256:5c5d0a3b48ceee0b48485e0c26037c0acd7d29765ca3fbb5cb3831d347423220"},
@@ -1057,6 +1104,10 @@ starlette = [
 toml = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
     {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
+]
+tortoise-cli = [
+    {file = "tortoise-cli-0.1.1.tar.gz", hash = "sha256:021a0e2368c41f1c1a09a493f9b1be61257ee177e33775a278a0d3895d1f7899"},
+    {file = "tortoise_cli-0.1.1-py3-none-any.whl", hash = "sha256:e5bd81f2dc12b9402a0249c72da956a1e621d161dc799c2f13cf66caab3533bd"},
 ]
 tortoise-orm = [
     {file = "tortoise-orm-0.17.7.tar.gz", hash = "sha256:74d5c6341fc0e2d4ef7a321f460107715da2679a2b3e2a48e32e276ed7bd3fc0"},
