@@ -1,13 +1,11 @@
 import datetime
 import os
-import sys
 import time
-from typing import List, Tuple
-from core.config import config
-from kombu import Connection, Exchange, Queue
 import logging
-
-from external_services.ses import send_mail
+from typing import List, Tuple
+from app.core.config import config
+from kombu import Connection, Exchange, Queue
+from app.external_services.ses import send_mail
 
 logger = logging.getLogger(__name__)
 
@@ -41,8 +39,8 @@ class QueueBaseHandler:
         ("notifications", "notifications.*")
     ]
 
-    def __init__(self):
-        self.connection = Connection(self.RABBITMQ_URL)
+    def __init__(self, connection: str = None):
+        self.connection = Connection(connection or self.RABBITMQ_URL)
         self._queues = None
         self._producer = None
         self._exchange = None

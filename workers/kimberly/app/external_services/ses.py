@@ -2,9 +2,9 @@ from typing import List
 
 import boto3
 import logging
-from core.config import region_name
+from app.core.config import region_name
 
-from core.config import aws_access_key_id, aws_secret_access_key
+from app.core.config import aws_access_key_id, aws_secret_access_key
 
 logger = logging.getLogger(__name__)
 

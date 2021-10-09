@@ -24,10 +24,10 @@ COPY ./pyproject.toml ./poetry.lock* ./
 
 RUN poetry install --no-root --no-dev
 
-COPY ./entrypoint /entrypoint
-RUN sed -i 's/\r$//g' /entrypoint
-RUN chmod +x /entrypoint
+#COPY ./entrypoint /entrypoint
+#RUN sed -i 's/\r$//g' /entrypoint
+#RUN chmod +x /entrypoint
 
 COPY . $WORK_DIR
 
-ENTRYPOINT ["/entrypoint"]
+#ENTRYPOINT ["/entrypoint"]

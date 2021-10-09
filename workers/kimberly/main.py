@@ -1,8 +1,8 @@
 import asyncio
 import logging
 
-from core.queue import queue
-from core.logging import configure_logging
+from app.core.queue import queue
+from app.core.logging import configure_logging
 
 configure_logging()
 
