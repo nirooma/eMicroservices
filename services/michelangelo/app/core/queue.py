@@ -120,33 +120,35 @@ class QueueBaseHandler:
         )
         self._disconnect()
 
-    def set_consumer(self, consumption_queue: Tuple[str, str]):
-        """
-        consumption_queue > ("queue_name", "routing_key")
-        """
+    def _set_consumer(self):
+        queue_name, routing_key = config.get("queue_name"), config.get("routing_key")
         if self._consumer is None:
-            queue = Queue(
-                name=consumption_queue[0],
-                routing_key=consumption_queue[1],
+            queue_ = Queue(
+                name=queue_name,
+                routing_key=routing_key,
                 exchange=self.exchange
             )
-            if consumption_queue[0] not in self.queue_list:
-                self.queues.append(queue)
-            self._consumer = self.connection.Consumer(queues=queue)
+            if queue_name not in self.queue_list:
+                self.queues.append(queue_)
+            self._consumer = self.connection.Consumer(queues=queue_)
         return self._consumer
 
     def consume(self):
         self._connect()
+        self._set_consumer()
         self._consumer.register_callback(callback)
         if not self._consumer:
             raise Exception("Run 'set_consumer' method first. ")
+
+        logging.info("Michelangelo worker is running, ready to accept connections.")
         with self._consumer:
-            print("Waiting for a new messages...")
             while True:
                 try:
                     self.connection.drain_events(timeout=1)
                 except Exception as e:
                     pass
+
+                time.sleep(2)
 
 
 def callback(body, message):

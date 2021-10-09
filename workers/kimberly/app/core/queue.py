@@ -120,14 +120,14 @@ class QueueBaseHandler:
     def _set_consumer(self):
         queue_name, routing_key = config.get("queue_name"), config.get("routing_key")
         if self._consumer is None:
-            queue = Queue(
+            queue_ = Queue(
                 name=queue_name,
                 routing_key=routing_key,
                 exchange=self.exchange
             )
             if queue_name not in self.queue_list:
-                self.queues.append(queue)
-            self._consumer = self.connection.Consumer(queues=queue)
+                self.queues.append(queue_)
+            self._consumer = self.connection.Consumer(queues=queue_)
         return self._consumer
 
     def consume(self):
