@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class QueueBaseHandler:
-    EXCHANGE_NAME = "donatello"
+    EXCHANGE_NAME = "eMicroservices"
     EXCHANGE_TYPE = "topic"
     RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://localhost:5672")
 
