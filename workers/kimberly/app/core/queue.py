@@ -144,7 +144,7 @@ class QueueBaseHandler:
         with self._consumer:
             while True:
                 try:
-                    self.connection.drain_events(timeout=1)
+                    self.connection.drain_events(timeout=3)
                 except Exception as e:
                     pass
 
