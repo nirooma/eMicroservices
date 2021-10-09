@@ -156,8 +156,10 @@ class QueueBaseHandler:
 
 def callback(body, message):
     queue_message = queue_callback_message_format(body, message)
-    print(queue_message)
-    message.ack()
+    prefix, task_name = queue_message["task"].split(".")
+
+    logger.info(f"Getting message from the queue, {prefix=}, {task_name=}")
+    logger.info(f"Message details {queue_message=}")
 
 
 def queue_callback_message_format(body, message):
@@ -179,4 +181,3 @@ queue = QueueBaseHandler()
 def send_task_to_queue(task_name: str, task_details: dict, routing_key: str = config.get("gRouting_key")):
     queue.prepare_data(task_name, task_details=task_details, routing_key=routing_key)
     queue.publish()
-    logger.info(f"task {task_name!r}was send to the queue")

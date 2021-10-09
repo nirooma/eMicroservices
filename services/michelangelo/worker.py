@@ -9,6 +9,6 @@ configure_logging()
 
 async def main():
     logging.info("Initializing Michelangelo worker")
-    # queue.consume()
+    queue.consume()
 
 asyncio.run(main())

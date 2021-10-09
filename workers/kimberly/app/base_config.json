@@ -1,5 +1,6 @@
 {
   "version": "0.1",
   "my_queue_name": "notifications",
-  "my_routing_key": "notifications.*"
+  "my_routing_key": "notifications.*",
+  "gRouting_key": "authentication.generic"
 }

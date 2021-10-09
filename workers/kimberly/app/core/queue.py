@@ -115,6 +115,7 @@ class QueueBaseHandler:
             retry_policy=self.retry_policy,
             declare=self.queues
         )
+        logger.info(f"Kimberly worker published to queue {self.data['properties']['routing_key']!r}")
         self._disconnect()
 
     def _set_consumer(self):
@@ -170,11 +171,13 @@ def callback(body, message):
             logging.error("invalid task name.")
             return
         # send the mail
-        send_mail(
+        response = send_mail(
             [queue_message["details"]["email"]],
             subject,
             body
         )
+        if response:
+            send_task_to_queue("mail.response", task_details={"response": response})
     message.ack()
 
 
@@ -192,3 +195,9 @@ def queue_callback_message_format(body, message):
 
 
 queue = QueueBaseHandler()
+
+
+def send_task_to_queue(task_name: str, task_details: dict, routing_key: str = config.get("gRouting_key")):
+    queue_ = QueueBaseHandler()
+    queue_.prepare_data(task_name, task_details=task_details, routing_key=routing_key)
+    queue_.publish()
