@@ -118,10 +118,11 @@ class QueueBaseHandler:
             retry_policy=self.retry_policy,
             declare=self.queues
         )
+        logger.info(f"Michelangelo worker published to queue {self.data['properties']['routing_key']!r}")
         self._disconnect()
 
     def _set_consumer(self):
-        queue_name, routing_key = config.get("queue_name"), config.get("routing_key")
+        queue_name, routing_key = config.get("my_queue_name"), config.get("my_routing_key")
         if self._consumer is None:
             queue_ = Queue(
                 name=queue_name,
@@ -131,6 +132,8 @@ class QueueBaseHandler:
             if queue_name not in self.queue_list:
                 self.queues.append(queue_)
             self._consumer = self.connection.Consumer(queues=queue_)
+
+        logger.info(f"Michelangelo worker is listening to queue {queue_name!r}")
         return self._consumer
 
     def consume(self):

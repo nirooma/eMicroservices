@@ -1,7 +1,7 @@
 {
   "version": "0.1",
-  "queue_name": "notifications",
-  "routing_key": "notifications.*",
+  "my_queue_name": "authentication",
+  "my_routing_key": "authentication.*",
   "gRouting_key": "notifications.generic",
   "errors": {
     "loginError": "Invalid credentials, Please try again.",

@@ -118,7 +118,7 @@ class QueueBaseHandler:
         self._disconnect()
 
     def _set_consumer(self):
-        queue_name, routing_key = config.get("queue_name"), config.get("routing_key")
+        queue_name, routing_key = config.get("my_queue_name"), config.get("my_routing_key")
         if self._consumer is None:
             queue_ = Queue(
                 name=queue_name,
@@ -128,6 +128,8 @@ class QueueBaseHandler:
             if queue_name not in self.queue_list:
                 self.queues.append(queue_)
             self._consumer = self.connection.Consumer(queues=queue_)
+
+        logger.info(f"Kimberly worker is listening to queue {queue_name!r}")
         return self._consumer
 
     def consume(self):
@@ -137,7 +139,7 @@ class QueueBaseHandler:
         if not self._consumer:
             raise Exception("Run 'set_consumer' method first. ")
 
-        logging.info("Kimberly worker is running, ready to accept connections.")
+        logging.info("Kimberly worker is running, ready to accept connections")
         with self._consumer:
             while True:
                 try:
