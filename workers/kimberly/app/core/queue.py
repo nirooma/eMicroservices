@@ -66,11 +66,11 @@ class QueueBaseHandler:
         if self._queues is None:
             return [
                 Queue(
-                    name=queue[0],
+                    name=queue_[0],
                     exchange=self.exchange,
-                    routing_key=queue[1]
+                    routing_key=queue_[1]
                 )
-                for queue in self.queue_list
+                for queue_ in self.queue_list
             ]
         return self._queues
 

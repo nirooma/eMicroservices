@@ -38,11 +38,12 @@ class QueueBaseHandler:
     }
 
     queue_list: List[Tuple[str, str]] = [
-        ("notifications", "notifications.*")
+        ("notifications", "notifications.*"),
+        ("authentication", "authentication.*")
     ]
 
-    def __init__(self):
-        self.connection = Connection(settings.RABBITMQ_URL)
+    def __init__(self, connection: str = None):
+        self.connection = Connection(connection or settings.RABBITMQ_URL)
         self._queues = None
         self._producer = None
         self._exchange = None
@@ -68,11 +69,11 @@ class QueueBaseHandler:
         if self._queues is None:
             return [
                 Queue(
-                    name=queue[0],
+                    name=queue_[0],
                     exchange=self.exchange,
-                    routing_key=queue[1]
+                    routing_key=queue_[1]
                 )
-                for queue in self.queue_list
+                for queue_ in self.queue_list
             ]
         return self._queues
 
