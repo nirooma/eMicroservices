@@ -36,10 +36,10 @@ def get_user(request: Request):
 class BearerAuthBackend(AuthenticationBackend):
     async def authenticate(self, request: Request):
         permissions = []
-        if "Authorization" not in request.headers and not request.cookies.get("session"):
+        if "Authorization" not in request.headers and not request.cookies.get("SessionToken"):
             return
 
-        credentials = request.cookies.get("session") or request.headers["Authorization"].split()[1]
+        credentials = request.cookies.get("SessionToken") or request.headers["Authorization"].split()[1]
         user: User = await get_current_user(token=credentials)
         if not user:
             return

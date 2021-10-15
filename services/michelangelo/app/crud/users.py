@@ -73,6 +73,7 @@ async def create_system_user():
             username="admin",
             password=security.get_password_hash("admin"),
             is_superuser=True,
+            is_active=True,
             email="admin@admin",
             phone="000000"
         )

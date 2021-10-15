@@ -177,7 +177,7 @@ def callback(body, message):
             body
         )
         if response:
-            send_task_to_queue("mail.response", task_details={"response": response})
+            send_task_to_queue("response.reset_password", task_details={"response": response})
     message.ack()
 
 

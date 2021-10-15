@@ -6,7 +6,9 @@
   "errors": {
     "loginError": "Invalid credentials, Please try again.",
     "forgotPassword": "An email will send to the account if the account is activate.",
-    "permissionError": "Action not allowed with the following permissions."
+    "permissionError": "Action not allowed with the following permissions.",
+    "tokenError": "Token is invalid, check to token and fix it."
+
   },
   "defaultAnswer": "Ok"
 }
