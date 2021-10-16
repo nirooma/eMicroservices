@@ -13,6 +13,7 @@ ipython = "^7.28.0"
 psycopg2-binary = "^2.9.1"
 channels = "^3.0.4"
 channels-redis = "^3.3.1"
+django-storages = "^1.12.1"
 
 [tool.poetry.dev-dependencies]
 

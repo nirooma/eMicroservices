@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
-export default function Home(props) {
+export default function Home() {
   return (
     <div className={styles.container}>
       <Head>
@@ -65,20 +65,4 @@ export default function Home(props) {
       </footer>
     </div>
   )
-}
-
-export async function getStaticProps(context) {
-  const res = await fetch(`http://michelangelo:8001/api/users/all_users`)
-  const data = await res.json()
-  console.log(data)
-
-  if (!data) {
-    return {
-      notFound: true,
-    }
-  }
-
-  return {
-    props: { data }, // will be passed to the page component as props
-  }
 }

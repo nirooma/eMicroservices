@@ -39,17 +39,17 @@ echo "#### Welcome To RETEKTO Cloud Docker #####"
 echo "##########################################"
 echo
 
-rabbitmq_ready() {
-    echo "### Waiting for rabbitmq ###"
-
-    while ! nc -z rabbitmq 5672; do
-      sleep 1
-    done
-
-    echo "### Rabbitmq started ###"
-}
-
-rabbitmq_ready
+#rabbitmq_ready() {
+#    echo "### Waiting for rabbitmq ###"
+#
+#    while ! nc -z rabbitmq 5672; do
+#      sleep 1
+#    done
+#
+#    echo "### Rabbitmq started ###"
+#}
+#
+#rabbitmq_ready
 
 echo "### Running migrations ###"
 python manage.py migrate
