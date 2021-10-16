@@ -5,6 +5,8 @@ from starlette.authentication import requires
 from starlette.responses import Response
 from starlette.templating import Jinja2Templates
 from tortoise.transactions import atomic
+
+from app.consts import DEFAULT_COOKIE_TTL
 from app.crud.users import create_system_user
 from app.models import Account
 from app.schemas.users import UserIn_Pydantic
@@ -58,7 +60,7 @@ async def login(response: Response, form_payload: OAuth2PasswordRequestForm = De
     access_token = create_access_token(
         data={"username": user.username, "email": user.email, "phone": user.phone}
     )
-    response.set_cookie("SessionToken", access_token, httponly=True)
+    response.set_cookie("SessionToken", access_token, httponly=True, max_age=DEFAULT_COOKIE_TTL)
     logger.info(f"Cookie set for user {user.username!r}")
     return {"access_token": access_token, "token_type": "bearer"}
 
