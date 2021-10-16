@@ -7,7 +7,8 @@
     "loginError": "Invalid credentials, Please try again.",
     "forgotPassword": "An email will send to the account if the account is activate.",
     "permissionError": "Action not allowed with the following permissions.",
-    "tokenError": "Token is invalid, check the token and fix it."
+    "tokenError": "Token is invalid, check the token and fix it.",
+    "activeAccount": "Account already activated."
 
   },
   "defaultAnswer": "Ok"
