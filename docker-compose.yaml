@@ -6,8 +6,8 @@ x-common-variables: &common-variables
   MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
   LEONARDO_SERVICE_URL: 'http://leonardo:8002'
   REDIS_URL: 'redis://redis:6379'
-#  RABBITMQ_URL: 'amqp://rabbitmq:5672'
-  RABBITMQ_URL: 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
+  RABBITMQ_URL: 'amqp://rabbitmq:5672'
+#  RABBITMQ_URL: 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
   APP_ENVIRONMENT: 'development'
 
 services:
@@ -41,22 +41,6 @@ services:
       retries: 5
     restart: always
 
-  traefik:
-    # The official v2 Traefik docker image
-    image: traefik:v2.5.3
-    container_name: traefik
-    # Enables the web UI and tells Traefik to listen to docker
-    command: --api.insecure=true --providers.docker
-    ports:
-      # The HTTP port
-      - "80:80"
-      # The Web UI (enabled by --api.insecure=true)
-      - "8080:8080"
-    volumes:
-      - ./infrastructure/traefik/traefik.toml:/etc/traefik/traefik.toml
-      - /var/run/docker.sock:/var/run/docker.sock
-
-
   redis:
     image: redis:6.2.5
     container_name: redis
@@ -70,8 +54,6 @@ services:
   rabbitmq:
     image: rabbitmq:3.9.4-management
     container_name: rabbitmq
-    ports:
-      - "15672:15672"
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 5s
@@ -79,25 +61,25 @@ services:
       retries: 50
     restart: always
 
-  donatello-worker:
-    build: ./services/donatello
-    container_name: donatello-worker
-    command: celery -A app.core.worker.celery worker --loglevel=info
-    environment:
-      <<: *common-variables
-      DONATELLO_DATABASE_URL: 'postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi'
-    volumes:
-      - ./services/donatello:/opt/donatello
-    depends_on:
-      - donatello
-      - rabbitmq
-      - redis
-    healthcheck:
-      test: celery inspect ping -A app.core.worker.celery
-      interval: 60s
-      timeout: 30s
-      retries: 3
-    restart: always
+#  donatello-worker:
+#    build: ./services/donatello
+#    container_name: donatello-worker
+#    command: celery -A app.core.worker.celery worker --loglevel=info
+#    environment:
+#      <<: *common-variables
+#      DONATELLO_DATABASE_URL: 'postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi'
+#    volumes:
+#      - ./services/donatello:/opt/donatello
+#    depends_on:
+#      - donatello
+#      - rabbitmq
+#      - redis
+#    healthcheck:
+#      test: celery inspect ping -A app.core.worker.celery
+#      interval: 60s
+#      timeout: 30s
+#      retries: 3
+#    restart: always
 
   donatello:
     build: ./services/donatello
@@ -126,14 +108,8 @@ services:
     volumes:
       - ./services/splinter:/opt/splinter
       - /opt/splinter/node_modules
-    ports:
-      - "3000:3000"
     expose:
       - 3000
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.splinter.entrypoints=web"
-      - "traefik.http.routers.splinter.rule=Host(`localhost`)"
 
   leonardo:
     build: ./services/leonardo
@@ -149,16 +125,14 @@ services:
       SQL_PORT: 5432
     depends_on:
       - leonardo-db
-    ports:
-      - "8002:8002"
     volumes:
       - ./services/leonardo:/opt/leonardo
-#    healthcheck:
-#      test: curl -f http://localhost:8002/health || exit 1
-#      interval: 60s
-#      timeout: 30s
-#      retries: 3
-#    restart: always
+    healthcheck:
+      test: curl -f http://localhost:8002/health || exit 1
+      interval: 60s
+      timeout: 30s
+      retries: 3
+    restart: always
 
   kimberly:
     build: ./workers/kimberly
@@ -190,18 +164,18 @@ services:
       retries: 5
     restart: always
 
-  michelangelo-worker:
-    build: ./services/michelangelo
-    container_name: michelangelo-worker
-    command: python worker.py
-    environment:
-      <<: *common-variables
-      MICHELANGELO_DATABASE_URL: 'postgres://postgres:postgres@michelangelo-db:5432/fastapi'
-    volumes:
-      - ./services/michelangelo:/opt/michelangelo
-    restart: on-failure
-    depends_on:
-      - michelangelo-db
+#  michelangelo-worker:
+#    build: ./services/michelangelo
+#    container_name: michelangelo-worker
+#    command: python worker.py
+#    environment:
+#      <<: *common-variables
+#      MICHELANGELO_DATABASE_URL: 'postgres://postgres:postgres@michelangelo-db:5432/fastapi'
+#    volumes:
+#      - ./services/michelangelo:/opt/michelangelo
+#    restart: on-failure
+#    depends_on:
+#      - michelangelo-db
 
   michelangelo:
     build: ./services/michelangelo
@@ -212,8 +186,6 @@ services:
       MICHELANGELO_DATABASE_URL: 'postgres://postgres:postgres@michelangelo-db:5432/fastapi'
     volumes:
       - ./services/michelangelo:/opt/michelangelo
-    ports:
-      - "8001:8001"
     entrypoint: ./entrypoint
     healthcheck:
       test: curl -f http://localhost:8001/health || exit 1
@@ -221,13 +193,20 @@ services:
       timeout: 30s
       retries: 3
     restart: always
+    expose:
+      - 8001
     depends_on:
       - michelangelo-db
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.michelangelo.entrypoints=web"
-      - "traefik.http.routers.michelangelo.rule=Host(`michelangelo.localhost`)"
 
+  nginx:
+    build: ./infrastructure/nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "15672:15672"
+    depends_on:
+      - leonardo
+      - splinter
 
 volumes:
   donatello-db-volume:
