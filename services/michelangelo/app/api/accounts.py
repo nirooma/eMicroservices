@@ -2,8 +2,9 @@ from typing import Dict
 from fastapi import Depends, APIRouter, status, HTTPException, BackgroundTasks, Request
 from starlette.authentication import requires
 from starlette.responses import Response
-
+from tortoise.transactions import atomic
 from app.crud.users import create_system_user
+from app.models import Account
 from app.schemas.users import UserIn_Pydantic
 import logging
 from app.core import security
@@ -12,7 +13,7 @@ from app.core.jwt import create_access_token, decode_access_token
 from app.schemas.token import Token
 from fastapi.security import OAuth2PasswordRequestForm
 from app.core.configuration_utils import config
-from app.utils import _response
+from app.utils import _response, decode_base64
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +21,7 @@ router = APIRouter()
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
+@atomic()
 async def register(payload: UserIn_Pydantic, background_tasks: BackgroundTasks):
     credentials_exception = HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -29,9 +31,10 @@ async def register(payload: UserIn_Pydantic, background_tasks: BackgroundTasks):
     await create_system_user()
     if not user:
         raise credentials_exception
+    token = await user.generate_token()
     await user.send_mail(
         "welcome_email",
-        task_details={"first_name": user.first_name, "last_name": user.last_name},
+        task_details={"first_name": user.first_name, "last_name": user.last_name, "token": token},
         background_tasks=background_tasks
     )
     logger.info(f"new account added to the dibi {user.email=}")
@@ -65,15 +68,20 @@ async def logout(request: Request, response: Response):
 
 
 @router.post('/forgot_password', status_code=status.HTTP_200_OK)
+@atomic()
 async def reset_password(email: str, background_tasks: BackgroundTasks) -> Dict:
     if user := await users.get_user_by_email(email):
         token = await user.generate_token()
+        user_account: Account = await user.user_account
+        # send task to the queue
         await user.send_mail(
             task_name="reset_password",
             task_details={"token": token},
             background_tasks=background_tasks
         )
         logger.info(f"reset password has been send to the email {email!r}")
+        user_account.has_to_change_password = True
+        await user_account.save()
 
     return _response(config.get("errors")["forgotPassword"])
 
@@ -81,11 +89,14 @@ async def reset_password(email: str, background_tasks: BackgroundTasks) -> Dict:
 @router.get('/account_confirmation')
 async def account_confirmation(token: str):
     try:
-        decode_token = decode_access_token(token)
+        decode_token = decode_base64(token)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=config.get("errors")["tokenError"])
 
-    if decode_token:
-        return decode_token
+    user = await users.get_user_by_username(decode_token["username"])
+    user.is_active = True
+    await user.save()
+    return _response()
+

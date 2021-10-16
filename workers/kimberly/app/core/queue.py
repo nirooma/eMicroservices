@@ -156,7 +156,7 @@ def callback(body, message):
     prefix, task_name = queue_message["task"].split(".")
 
     logger.info(f"Getting message from the queue, {prefix=}, {task_name=}")
-    logger.debug(f"Message details {queue_message=}")
+    logger.info(f"Message details {queue_message=}")
 
     if prefix == "send_mail":
         # reset password

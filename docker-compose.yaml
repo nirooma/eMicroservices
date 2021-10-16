@@ -197,6 +197,8 @@ services:
       timeout: 30s
       retries: 3
     restart: always
+    ports:
+      - "8001:8001"
     expose:
       - 8001
     depends_on:

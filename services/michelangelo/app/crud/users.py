@@ -47,10 +47,6 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
     )
     try:
         payload = decode_access_token(token)
-
-        if payload.get("general_use") is True:  # Use for another token encoded(reset password etc)
-            raise credentials_exception
-
         sub = json.loads(payload.get("sub"))
         username = sub["username"]
         if username is None:

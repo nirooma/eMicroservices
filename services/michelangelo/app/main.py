@@ -1,12 +1,10 @@
 import logging
-import os
 
 import psycopg2
 from fastapi import FastAPI, Request
 
 from app.core.authentication import middleware
 from app.core.logging import configure_logging
-from app.crud.users import create_system_user
 from app.db.session import init_db
 from app.core.config import settings
 from app.urls import api_router
