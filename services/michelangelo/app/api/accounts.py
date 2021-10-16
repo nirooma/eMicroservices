@@ -1,13 +1,13 @@
+import logging
 from typing import Dict
 from fastapi import Depends, APIRouter, status, HTTPException, BackgroundTasks, Request
 from starlette.authentication import requires
-from starlette.responses import Response, HTMLResponse
+from starlette.responses import Response
 from starlette.templating import Jinja2Templates
 from tortoise.transactions import atomic
 from app.crud.users import create_system_user
 from app.models import Account
 from app.schemas.users import UserIn_Pydantic
-import logging
 from app.core import security
 from app.crud import users
 from app.core.jwt import create_access_token

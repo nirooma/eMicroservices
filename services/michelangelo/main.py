@@ -2,7 +2,8 @@ import logging
 import os
 
 import psycopg2
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
+from starlette.responses import Response
 
 from app.core.authentication import middleware
 from app.core.logging import configure_logging

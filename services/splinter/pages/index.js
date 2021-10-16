@@ -68,7 +68,7 @@ export default function Home(props) {
 }
 
 export async function getStaticProps(context) {
-  const res = await fetch(`http://michelangelo:8001/api/v1/users/all_users`)
+  const res = await fetch(`http://michelangelo:8001/api/users/all_users`)
   const data = await res.json()
   console.log(data)
 

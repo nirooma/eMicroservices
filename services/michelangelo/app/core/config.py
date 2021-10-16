@@ -15,7 +15,7 @@ class AppEnvironments(enum.Enum):
 
 
 class BaseConfiguration(BaseSettings):
-    API_V1_STR: str = "/api/v1"
+    API_V1_STR: str = "/api"
     SECRET_KEY: str = secrets.token_urlsafe(32)
     PROJECT_NAME: str = "Cloud Project"
     DOCKER_MODE: bool = False if platform.uname().system == "Darwin" else True
