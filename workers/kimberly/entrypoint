@@ -16,7 +16,6 @@ rabbitmq_ready() {
 
     echo "### Rabbitmq started ###"
 }
-
 rabbitmq_ready
 
 
