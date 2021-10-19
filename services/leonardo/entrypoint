@@ -55,8 +55,4 @@ echo "### Running migrations ###"
 python manage.py migrate
 echo "### Migrations running completed ###"
 
-echo "### Collecting staticfiles ###"
-python manage.py collectstatic --noinput
-echo "### Collection staticfiles completed ###"
-
 exec "$@"

@@ -103,8 +103,7 @@ services:
       DONATELLO_SERVICE_URL: 'http://donatello:8000'
       MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
       LEONARDO_SERVICE_URL: 'http://leonardo:8002'
-    ports:
-      - "3000:3000"
+
   leonardo:
     build: ./services/leonardo
     container_name: leonardo
@@ -125,11 +124,13 @@ services:
       SQL_PASSWORD: postgres
       SQL_HOST: leonardo-db
       SQL_PORT: 5432
+    entrypoint: ./entrypoint
     depends_on:
       - leonardo-db
     volumes:
-      - ./services/leonardo:/opt/leonardo
       - staticfiles:/opt/leonardo/staticfiles
+    ports:
+      - "8002:8002"
 #    healthcheck:
 #      test: curl -f http://localhost:8002/health || exit 1
 #      interval: 60s
@@ -153,11 +154,8 @@ services:
     entrypoint: ./entrypoint
     env_file:
       - "/Users/nirmansour/.pems/eMicroservices.txt"
-    volumes:
-      - ./workers/kimberly:/opt/kimberly
     depends_on:
       - rabbitmq
-      - michelangelo
 
 ########################################
 ############### michelangelo ################
