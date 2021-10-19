@@ -5,7 +5,6 @@ from starlette.authentication import requires
 from starlette.responses import Response
 from starlette.templating import Jinja2Templates
 from tortoise.transactions import atomic
-
 from app.consts import DEFAULT_COOKIE_TTL
 from app.crud.users import create_system_user
 from app.models import Account

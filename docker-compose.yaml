@@ -84,8 +84,6 @@ services:
   donatello:
     build: ./services/donatello
     container_name: donatello
-    ports:
-      - "8000:8000"
     command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
     environment:
       <<: *common-variables
@@ -108,8 +106,6 @@ services:
     volumes:
       - ./services/splinter:/opt/splinter
       - /opt/splinter/node_modules
-    expose:
-      - 3000
 
   leonardo:
     build: ./services/leonardo
@@ -124,8 +120,6 @@ services:
       SQL_PASSWORD: postgres
       SQL_HOST: leonardo-db
       SQL_PORT: 5432
-    ports:
-      - "8002:8002"
     depends_on:
       - leonardo-db
     volumes:
@@ -199,8 +193,6 @@ services:
       timeout: 30s
       retries: 3
     restart: always
-    ports:
-      - "8001:8001"
     expose:
       - 8001
     depends_on:
