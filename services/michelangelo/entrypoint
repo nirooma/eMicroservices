@@ -57,7 +57,7 @@ rabbitmq_ready() {
     echo "### Rabbitmq started ###"
 }
 
-#rabbitmq_ready
+rabbitmq_ready
 
 echo "### Running migrations ###"
 aerich upgrade

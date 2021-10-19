@@ -60,7 +60,7 @@ ENV HOME /opt/michelangelo
 
 # install system dependencies
 RUN apt-get update \
-  && apt-get -y install netcat postgresql\
+  && apt-get -y install netcat \
   && apt-get clean
 
 # create directory for the app user
