@@ -212,7 +212,7 @@ services:
       - michelangelo-db
 
   nginx:
-    build: ./infrastructure/nginx
+    image: nginx:1.21.3
     container_name: nginx
     ports:
       - "80:80"
@@ -220,8 +220,10 @@ services:
     depends_on:
       - leonardo
       - splinter
+      - rabbitmq
     restart: always
     volumes:
+      - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf
       - staticfiles:/opt/leonardo/staticfiles
 
 volumes:
