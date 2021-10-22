@@ -95,9 +95,7 @@ services:
     restart: always
 
   splinter:
-#    image: nirooma/splinter:latest
-    build: ./services/splinter
-    command: yarn start
+    image: nirooma/splinter:latest
     container_name: splinter
     environment:
       SPLINTER_SERVICE_URL: 'http://localhost:3000'
