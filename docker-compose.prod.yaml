@@ -73,7 +73,7 @@ services:
 #    restart: always
 
   donatello:
-    build: ./services/donatello
+    image: nirooma/donatello:latest
     container_name: donatello
     command: gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
     environment:
@@ -138,24 +138,24 @@ services:
 #      retries: 3
 #    restart: always
 
-#  kimberly:
-#    build: ./workers/kimberly
-#    command: python main.py
-#    container_name: kimberly
-#    environment:
-#      SPLINTER_SERVICE_URL: 'http://localhost:3000'
-#      DONATELLO_SERVICE_URL: 'http://donatello:8000'
-#      MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
-#      LEONARDO_SERVICE_URL: 'http://leonardo:8002'
-#      REDIS_URL: 'redis://redis:6379'
-#      RABBITMQ_URL: 'amqp://rabbitmq:5672'
-#      #  RABBITMQ_URL: 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
-#      APP_ENVIRONMENT: 'development'
-#    entrypoint: ./entrypoint
+  kimberly:
+    image: nirooma/kimberly:latest
+    command: python main.py
+    container_name: kimberly
+    environment:
+      SPLINTER_SERVICE_URL: 'http://localhost:3000'
+      DONATELLO_SERVICE_URL: 'http://donatello:8000'
+      MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
+      LEONARDO_SERVICE_URL: 'http://leonardo:8002'
+      REDIS_URL: 'redis://redis:6379'
+      RABBITMQ_URL: 'amqp://rabbitmq:5672'
+      #  RABBITMQ_URL: 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
+      APP_ENVIRONMENT: 'development'
+    entrypoint: ./entrypoint
 #    env_file:
 #      - "/Users/nirmansour/.pems/eMicroservices.txt"
-#    depends_on:
-#      - rabbitmq
+    depends_on:
+      - rabbitmq
 
 ########################################
 ############### michelangelo ################
