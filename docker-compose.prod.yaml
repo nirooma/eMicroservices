@@ -1,16 +1,4 @@
-version: '3'
-
-x-eMicroservices-common:
-  environment:
-    &eMicroservices-common-env
-      SPLINTER_SERVICE_URL: 'http://localhost:3000'
-      DONATELLO_SERVICE_URL: 'http://donatello:8000'
-      MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
-      LEONARDO_SERVICE_URL: 'http://leonardo:8002'
-      REDIS_URL: 'redis://redis:6379'
-      RABBITMQ_URL: 'amqp://rabbitmq:5672'
-      #  RABBITMQ_URL: 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
-      APP_ENVIRONMENT: 'development'
+version: '3.3'
 
 
 services:
@@ -89,7 +77,14 @@ services:
     container_name: donatello
     command: gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
     environment:
-      <<: *eMicroservices-common-env
+      SPLINTER_SERVICE_URL: 'http://localhost:3000'
+      DONATELLO_SERVICE_URL: 'http://donatello:8000'
+      MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
+      LEONARDO_SERVICE_URL: 'http://leonardo:8002'
+      REDIS_URL: 'redis://redis:6379'
+      RABBITMQ_URL: 'amqp://rabbitmq:5672'
+      #  RABBITMQ_URL: 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
+      APP_ENVIRONMENT: 'development'
       DONATELLO_DATABASE_URL: 'postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi'
     entrypoint: ./entrypoint
     healthcheck:
@@ -104,7 +99,10 @@ services:
     command: yarn start
     container_name: splinter
     environment:
-      <<: *eMicroservices-common-env
+      SPLINTER_SERVICE_URL: 'http://localhost:3000'
+      DONATELLO_SERVICE_URL: 'http://donatello:8000'
+      MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
+      LEONARDO_SERVICE_URL: 'http://leonardo:8002'
 
   leonardo:
     build: ./services/leonardo
@@ -112,7 +110,14 @@ services:
 #    command: python manage.py runserver 0.0.0.0:8002
     command: daphne --bind 0.0.0.0 --port 8002 core.asgi:application
     environment:
-      <<: *eMicroservices-common-env
+      SPLINTER_SERVICE_URL: 'http://localhost:3000'
+      DONATELLO_SERVICE_URL: 'http://donatello:8000'
+      MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
+      LEONARDO_SERVICE_URL: 'http://leonardo:8002'
+      REDIS_URL: 'redis://redis:6379'
+      RABBITMQ_URL: 'amqp://rabbitmq:5672'
+      #  RABBITMQ_URL: 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
+      APP_ENVIRONMENT: 'development'
       SQL_ENGINE: django.db.backends.postgresql
       SQL_DATABASE: fastapi
       SQL_USER: postgres
@@ -138,7 +143,14 @@ services:
 #    command: python main.py
 #    container_name: kimberly
 #    environment:
-#      <<: *eMicroservices-common-env
+#      SPLINTER_SERVICE_URL: 'http://localhost:3000'
+#      DONATELLO_SERVICE_URL: 'http://donatello:8000'
+#      MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
+#      LEONARDO_SERVICE_URL: 'http://leonardo:8002'
+#      REDIS_URL: 'redis://redis:6379'
+#      RABBITMQ_URL: 'amqp://rabbitmq:5672'
+#      #  RABBITMQ_URL: 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
+#      APP_ENVIRONMENT: 'development'
 #    entrypoint: ./entrypoint
 #    env_file:
 #      - "/Users/nirmansour/.pems/eMicroservices.txt"
@@ -181,7 +193,13 @@ services:
     container_name: michelangelo
     command: gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8001
     environment:
-      <<: *eMicroservices-common-env
+      SPLINTER_SERVICE_URL: 'http://localhost:3000'
+      DONATELLO_SERVICE_URL: 'http://donatello:8000'
+      MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
+      LEONARDO_SERVICE_URL: 'http://leonardo:8002'
+      REDIS_URL: 'redis://redis:6379'
+      RABBITMQ_URL: 'amqp://rabbitmq:5672'
+      APP_ENVIRONMENT: 'development'
       MICHELANGELO_DATABASE_URL: 'postgres://postgres:postgres@michelangelo-db:5432/fastapi'
     entrypoint: ./entrypoint
     healthcheck:
