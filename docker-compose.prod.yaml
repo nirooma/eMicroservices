@@ -95,7 +95,8 @@ services:
     restart: always
 
   splinter:
-    image: nirooma/splinter:latest
+#    image: nirooma/splinter:latest # Use this line in production mode. M1 issue.
+    build: ./services/splinter # Comment out this line in production mode.
     container_name: splinter
     environment:
       SPLINTER_SERVICE_URL: 'http://localhost:3000'
