@@ -1,7 +1,41 @@
 version: '3.3'
-
-
 services:
+  ################ Core ################
+  redis:
+    image: redis:6.2.5
+    container_name: redis
+    healthcheck:
+      test: redis-cli ping
+      interval: 5s
+      timeout: 30s
+      retries: 50
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:3.9.4-management
+    container_name: rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 30s
+      retries: 50
+    restart: always
+
+  nginx:
+    build: ./infrastructure/nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "15672:15672"
+    depends_on:
+      - leonardo
+      - splinter
+      - rabbitmq
+    restart: always
+    volumes:
+      - staticfiles_:/opt/leonardo/staticfiles
+
+################ leonardo #################
   leonardo-db:
     image: postgres:13.4-alpine
     container_name: leonardo-db
@@ -15,7 +49,6 @@ services:
       retries: 5
     restart: always
 
-
   leonardo:
     build: ./services/leonardo
     container_name: leonardo
@@ -27,7 +60,6 @@ services:
       SQL_PASSWORD: postgres
       SQL_HOST: leonardo-db
       SQL_PORT: 5432
-#    entrypoint: ./entrypoint
     depends_on:
       - leonardo-db
     volumes:
@@ -35,17 +67,142 @@ services:
     expose:
       - 8002
 
-  nginx:
-    build: ./infrastructure/nginx
-    container_name: nginx
-    ports:
-      - "80:80"
+############### splinter ###################
+  splinter:
+#    image: nirooma/splinter:latest
+    build: ./services/splinter
+    container_name: splinter
+    environment:
+      SPLINTER_SERVICE_URL: 'http://localhost:3000'
+      DONATELLO_SERVICE_URL: 'http://donatello:8000'
+      MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
+      LEONARDO_SERVICE_URL: 'http://leonardo:8002'
+
+################# kimberly ##################
+  kimberly:
+    image: nirooma/kimberly:latest
+    command: python main.py
+    container_name: kimberly
+    environment:
+      SPLINTER_SERVICE_URL: 'http://localhost:3000'
+      DONATELLO_SERVICE_URL: 'http://donatello:8000'
+      MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
+      LEONARDO_SERVICE_URL: 'http://leonardo:8002'
+      REDIS_URL: 'redis://redis:6379'
+      RABBITMQ_URL: 'amqp://rabbitmq:5672'
+      #  RABBITMQ_URL: 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
+      APP_ENVIRONMENT: 'development'
+    entrypoint: ./entrypoint
+    env_file:
+      - "/Users/nirmansour/.pems/eMicroservices.txt"
     depends_on:
-      - leonardo
+      - rabbitmq
 
-    restart: always
+################# michelangelo ###################
+  michelangelo-db:
+    image: postgres:13.4-alpine
+    container_name: michelangelo-db
     volumes:
-      - staticfiles_:/opt/leonardo/staticfiles
+      - michelangelo-db-volume:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=fastapi
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 5s
+      retries: 5
+    restart: always
 
+  michelangelo:
+    image: nirooma/michelangelo:latest
+    container_name: michelangelo
+    command: gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8001
+    environment:
+      SPLINTER_SERVICE_URL: 'http://localhost:3000'
+      DONATELLO_SERVICE_URL: 'http://donatello:8000'
+      MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
+      LEONARDO_SERVICE_URL: 'http://leonardo:8002'
+      REDIS_URL: 'redis://redis:6379'
+      RABBITMQ_URL: 'amqp://rabbitmq:5672'
+      APP_ENVIRONMENT: 'development'
+      MICHELANGELO_DATABASE_URL: 'postgres://postgres:postgres@michelangelo-db:5432/fastapi'
+    entrypoint: ./entrypoint
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: curl -f http://localhost:8001/health || exit 1
+      interval: 5m
+      timeout: 30s
+      retries: 3
+    restart: always
+    depends_on:
+      - michelangelo-db
+
+  michelangelo-worker:
+    build: ./services/michelangelo
+    container_name: michelangelo-worker
+    command: python worker.py
+    environment:
+      SPLINTER_SERVICE_URL: 'http://localhost:3000'
+      DONATELLO_SERVICE_URL: 'http://donatello:8000'
+      MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
+      LEONARDO_SERVICE_URL: 'http://leonardo:8002'
+      REDIS_URL: 'redis://redis:6379'
+      RABBITMQ_URL: 'amqp://rabbitmq:5672'
+      APP_ENVIRONMENT: 'development'
+      MICHELANGELO_DATABASE_URL: 'postgres://postgres:postgres@michelangelo-db:5432/fastapi'
+    volumes:
+      - ./services/michelangelo:/opt/michelangelo
+    restart: on-failure
+    entrypoint: ./entrypoint
+    depends_on:
+      - michelangelo
+      - michelangelo-db
+
+################ donatello ###################
+  donatello-db:
+    image: postgres:13.4-alpine
+    container_name: donatello-db
+    volumes:
+      - donatello-db-volume:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=fastapi
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 5s
+      retries: 5
+    restart: always
+
+  donatello:
+    image: nirooma/donatello:latest
+    container_name: donatello
+    command: gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+    environment:
+      SPLINTER_SERVICE_URL: 'http://localhost:3000'
+      DONATELLO_SERVICE_URL: 'http://donatello:8000'
+      MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
+      LEONARDO_SERVICE_URL: 'http://leonardo:8002'
+      REDIS_URL: 'redis://redis:6379'
+      RABBITMQ_URL: 'amqp://rabbitmq:5672'
+      #  RABBITMQ_URL: 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
+      APP_ENVIRONMENT: 'development'
+      DONATELLO_DATABASE_URL: 'postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi'
+    entrypoint: ./entrypoint
+    healthcheck:
+      test: curl -f http://localhost:8000/health || exit 1
+      interval: 5m
+      timeout: 30s
+      retries: 3
+    restart: always
+    depends_on:
+      - donatello-db
+
+############### volumes ##############
 volumes:
+  donatello-db-volume:
+  leonardo-db-volume:
+  michelangelo-db-volume:
   staticfiles_:
