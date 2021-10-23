@@ -1,18 +1,21 @@
-FROM python:3.9.6-slim-buster
 
+###########
+# BUILDER #
+###########
+ARG PYTHON_VERSION=3.9.6
 
+# pull official base image
+FROM python:${PYTHON_VERSION}-slim-buster as builder
 
 # set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-ENV WORK_DIR=/opt/donatello
+ENV WORK_DIR /tmp
 
-# set working directory
+# set work directory
 WORKDIR $WORK_DIR
 
 # install system dependencies
 RUN apt-get update \
-  && apt-get -y install netcat gcc postgresql curl \
+  && apt-get -y install curl \
   && apt-get clean
 
 # Install Poetry
@@ -20,16 +23,68 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
     cd /usr/local/bin && \
     ln -s /opt/poetry/bin/poetry && \
     poetry config virtualenvs.create false
-# Copy poetry.lock* in case it doesn't exist in the repo
 
-COPY ./pyproject.toml ./poetry.lock* ./
+COPY ./pyproject.toml ./poetry.lock* $WORK_DIR/
 
-RUN poetry install --no-root --no-dev
+# Export requirements file
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-COPY ./entrypoint /entrypoint
-RUN sed -i 's/\r$//g' /entrypoint
-RUN chmod +x /entrypoint
+#########
+# STAGING #
+#########
 
-COPY . $WORK_DIR
+# pull official base image
+FROM python:${PYTHON_VERSION}-slim-buster as staging
 
-ENTRYPOINT ["/entrypoint"]
+# create the appropriate directories
+ENV HOME /tmp2
+
+# install system dependencies
+RUN apt-get update \
+  && apt-get -y install gcc \
+  && apt-get clean
+
+## install python dependencies
+COPY --from=builder tmp/requirements.txt $HOME/requirements.txt
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir $HOME/wheels -r $HOME/requirements.txt
+
+#########
+# FINAL #
+#########
+FROM python:${PYTHON_VERSION}-slim-buster
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV ENVIRONMENT production
+ENV HOME /opt/donatello
+
+# install system dependencies
+RUN apt-get update \
+  && apt-get -y install netcat \
+  && apt-get clean
+
+# create directory for the app user
+WORKDIR $HOME
+
+# create the app user
+RUN addgroup --system app && adduser --system --group app
+
+# install dependencies
+COPY --from=staging /tmp2/wheels /wheels
+COPY --from=staging tmp2/requirements.txt .
+RUN pip install --upgrade pip
+RUN pip install --no-cache /wheels/*
+
+# copy project
+COPY . $HOME
+
+RUN sed -i 's/\r$//g'  ./entrypoint.sh
+RUN chmod +x  ./entrypoint.sh
+
+# chown all the files to the app user
+RUN chown -R app:app $HOME
+
+# change to the app user
+USER app
+
+ENTRYPOINT ["./entrypoint.sh"]

@@ -1,5 +1,9 @@
-version: '3.9'
+##### Dev Mode Docker Compose #####
+##############################
 
+# Rabbitmq managed service for dev = 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
+
+version: '3.9'
 x-common-variables: &common-variables
   SPLINTER_SERVICE_URL: 'http://localhost:3000'
   DONATELLO_SERVICE_URL: 'http://donatello:8000'
@@ -7,40 +11,10 @@ x-common-variables: &common-variables
   LEONARDO_SERVICE_URL: 'http://leonardo:8002'
   REDIS_URL: 'redis://redis:6379'
   RABBITMQ_URL: 'amqp://rabbitmq:5672'
-#  RABBITMQ_URL: 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
   APP_ENVIRONMENT: 'development'
 
 services:
-  donatello-db:
-    image: postgres:13.4-alpine
-    container_name: donatello-db
-    volumes:
-      - donatello-db-volume:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_DB=fastapi
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    healthcheck:
-      test: pg_isready -U postgres
-      interval: 5s
-      retries: 5
-    restart: always
-
-  leonardo-db:
-    image: postgres:13.4-alpine
-    container_name: leonardo-db
-    volumes:
-      - leonardo-db-volume:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_DB=fastapi
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    healthcheck:
-      test: pg_isready -U postgres
-      interval: 5s
-      retries: 5
-    restart: always
-
+################ Core ################
   redis:
     image: redis:6.2.5
     container_name: redis
@@ -59,6 +33,75 @@ services:
       interval: 5s
       timeout: 30s
       retries: 50
+    restart: always
+
+  nginx:
+    build: ./infrastructure/nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "15672:15672"
+    depends_on:
+      - leonardo
+      - splinter
+      - rabbitmq
+    restart: always
+    volumes:
+      - staticfiles_:/opt/leonardo/staticfiles
+
+################ leonardo #################
+  leonardo-db:
+    image: postgres:13.4-alpine
+    container_name: leonardo-db
+    volumes:
+      - leonardo-db-volume:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=fastapi
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 5s
+      retries: 5
+    restart: always
+
+  leonardo:
+    build:
+      context:  ./services/leonardo
+      dockerfile: Dockerfile.dev
+    container_name: leonardo
+    command: python manage.py runserver 0.0.0.0:8002
+    environment:
+      <<: *common-variables
+      SQL_ENGINE: django.db.backends.postgresql
+      SQL_DATABASE: fastapi
+      SQL_USER: postgres
+      SQL_PASSWORD: postgres
+      SQL_HOST: leonardo-db
+      SQL_PORT: 5432
+    depends_on:
+      - leonardo-db
+      - rabbitmq
+    volumes:
+      - ./services/leonardo:/opt/leonardo
+      - staticfiles_:/opt/leonardo/staticfiles
+    ports:
+      - "8002:8002"
+
+################# donatello ##################
+  donatello-db:
+    image: postgres:13.4-alpine
+    container_name: donatello-db
+    volumes:
+      - donatello-db-volume:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=fastapi
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 5s
+      retries: 5
     restart: always
 
 #  donatello-worker:
@@ -82,9 +125,13 @@ services:
 #    restart: always
 
   donatello:
-    build: ./services/donatello
+    build:
+      context: ./services/donatello
+      dockerfile: Dockerfile.dev
     container_name: donatello
     command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
     environment:
       <<: *common-variables
       DONATELLO_DATABASE_URL: 'postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi'
@@ -97,47 +144,26 @@ services:
       retries: 3
     restart: always
 
+############### splinter ###################
   splinter:
     build:
       context: ./services/splinter
-    command: npm run dev
+      dockerfile: Dockerfile.dev
+    command: yarn run dev
     container_name: splinter
     environment: *common-variables
+    ports:
+      - "3000:3000"
     volumes:
       - ./services/splinter:/opt/splinter
       - /opt/splinter/node_modules
 
-  leonardo:
-    build: ./services/leonardo
-    container_name: leonardo
-    command: python manage.py runserver 0.0.0.0:8002
-#    command: daphne --bind 0.0.0.0 --port 8002 core.asgi:application
-    environment:
-      <<: *common-variables
-      SQL_ENGINE: django.db.backends.postgresql
-      SQL_DATABASE: fastapi
-      SQL_USER: postgres
-      SQL_PASSWORD: postgres
-      SQL_HOST: leonardo-db
-      SQL_PORT: 5432
-    depends_on:
-      - leonardo-db
-    volumes:
-      - ./services/leonardo:/opt/leonardo
-      - staticfiles:/opt/leonardo/staticfiles
-#    healthcheck:
-#      test: curl -f http://localhost:8002/health || exit 1
-#      interval: 60s
-#      timeout: 30s
-#      retries: 3
-#    restart: always
-
+################# kimberly ##################
   kimberly:
     build: ./workers/kimberly
     command: python main.py
     container_name: kimberly
     environment: *common-variables
-    entrypoint: ./entrypoint
     env_file:
       - "/Users/nirmansour/.pems/eMicroservices.txt"
     volumes:
@@ -146,9 +172,7 @@ services:
       - rabbitmq
       - michelangelo
 
-########################################
 ############### michelangelo ################
-########################################
   michelangelo-db:
     image: postgres:13.4-alpine
     container_name: michelangelo-db
@@ -164,18 +188,21 @@ services:
       retries: 5
     restart: always
 
-#  michelangelo-worker:
-#    build: ./services/michelangelo
-#    container_name: michelangelo-worker
-#    command: python worker.py
-#    environment:
-#      <<: *common-variables
-#      MICHELANGELO_DATABASE_URL: 'postgres://postgres:postgres@michelangelo-db:5432/fastapi'
-#    volumes:
-#      - ./services/michelangelo:/opt/michelangelo
-#    restart: on-failure
-#    depends_on:
-#      - michelangelo-db
+  michelangelo-worker:
+    build:
+      context: ./services/michelangelo
+      dockerfile: Dockerfile.dev
+    container_name: michelangelo-worker
+    command: python worker.py
+    environment:
+      <<: *common-variables
+      MICHELANGELO_DATABASE_URL: 'postgres://postgres:postgres@michelangelo-db:5432/fastapi'
+    volumes:
+      - ./services/michelangelo:/opt/michelangelo
+    restart: on-failure
+    depends_on:
+      - michelangelo-db
+      - michelangelo
 
   michelangelo:
     build:
@@ -188,33 +215,21 @@ services:
       MICHELANGELO_DATABASE_URL: 'postgres://postgres:postgres@michelangelo-db:5432/fastapi'
     volumes:
       - ./services/michelangelo:/opt/michelangelo
-    entrypoint: ./entrypoint
     healthcheck:
       test: curl -f http://localhost:8001/health || exit 1
       interval: 5m
       timeout: 30s
       retries: 3
     restart: always
-    expose:
-      - 8001
+    ports:
+      - "8001:8001"
     depends_on:
       - michelangelo-db
+      - rabbitmq
 
-  nginx:
-    build: ./infrastructure/nginx
-    container_name: nginx
-    ports:
-      - "80:80"
-      - "15672:15672"
-    depends_on:
-      - leonardo
-      - splinter
-    restart: always
-    volumes:
-      - staticfiles:/opt/leonardo/staticfiles
-
+############### volumes ##############
 volumes:
   donatello-db-volume:
   leonardo-db-volume:
   michelangelo-db-volume:
-  staticfiles:
+  staticfiles_:
