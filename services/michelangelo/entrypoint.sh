@@ -43,7 +43,7 @@ done
 
 echo
 echo "##########################################"
-echo "#### Welcome To RETEKTO Cloud Docker #####"
+echo "## Welcome To Michelangelo Cloud Docker ##"
 echo "##########################################"
 echo
 

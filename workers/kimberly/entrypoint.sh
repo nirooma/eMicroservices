@@ -7,6 +7,12 @@ set -o pipefail
 # exits if any of your variables is not set
 set -o nounset
 
+echo
+echo "##########################################"
+echo "#### Welcome To Kimberly Cloud Docker ####"
+echo "##########################################"
+echo
+
 rabbitmq_ready() {
     echo "### Waiting for rabbitmq ###"
 

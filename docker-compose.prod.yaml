@@ -50,6 +50,7 @@ services:
     restart: always
 
   leonardo:
+#    image: nirooma/leonardo:latest
     build: ./services/leonardo
     container_name: leonardo
     command: daphne --bind 0.0.0.0 --port 8002 core.asgi:application
@@ -69,8 +70,8 @@ services:
 
 ############### splinter ###################
   splinter:
-#    image: nirooma/splinter:latest
-    build: ./services/splinter
+#    image: nirooma/splinter:latest # Use this line for production mode. M1 issue.
+    build: ./services/splinter # Don't use this one in production mode.
     container_name: splinter
     environment:
       SPLINTER_SERVICE_URL: 'http://localhost:3000'
@@ -80,7 +81,7 @@ services:
 
 ################# kimberly ##################
   kimberly:
-    image: nirooma/kimberly:latest
+    build: ./workers/kimberly
     command: python main.py
     container_name: kimberly
     environment:
@@ -92,7 +93,6 @@ services:
       RABBITMQ_URL: 'amqp://rabbitmq:5672'
       #  RABBITMQ_URL: 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
       APP_ENVIRONMENT: 'development'
-    entrypoint: ./entrypoint
     env_file:
       - "/Users/nirmansour/.pems/eMicroservices.txt"
     depends_on:
@@ -115,7 +115,8 @@ services:
     restart: always
 
   michelangelo:
-    image: nirooma/michelangelo:latest
+#    image: nirooma/michelangelo:latest
+    build: ./services/michelangelo
     container_name: michelangelo
     command: gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8001
     environment:
@@ -127,9 +128,6 @@ services:
       RABBITMQ_URL: 'amqp://rabbitmq:5672'
       APP_ENVIRONMENT: 'development'
       MICHELANGELO_DATABASE_URL: 'postgres://postgres:postgres@michelangelo-db:5432/fastapi'
-    entrypoint: ./entrypoint
-    ports:
-      - "8001:8001"
     healthcheck:
       test: curl -f http://localhost:8001/health || exit 1
       interval: 5m
@@ -140,7 +138,7 @@ services:
       - michelangelo-db
 
   michelangelo-worker:
-    build: ./services/michelangelo
+    image: nirooma/michelangelo:latest
     container_name: michelangelo-worker
     command: python worker.py
     environment:
@@ -152,10 +150,7 @@ services:
       RABBITMQ_URL: 'amqp://rabbitmq:5672'
       APP_ENVIRONMENT: 'development'
       MICHELANGELO_DATABASE_URL: 'postgres://postgres:postgres@michelangelo-db:5432/fastapi'
-    volumes:
-      - ./services/michelangelo:/opt/michelangelo
     restart: on-failure
-    entrypoint: ./entrypoint
     depends_on:
       - michelangelo
       - michelangelo-db
@@ -177,7 +172,8 @@ services:
     restart: always
 
   donatello:
-    image: nirooma/donatello:latest
+#    image: nirooma/donatello:latest
+    build: ./services/donatello
     container_name: donatello
     command: gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
     environment:
@@ -190,7 +186,6 @@ services:
       #  RABBITMQ_URL: 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
       APP_ENVIRONMENT: 'development'
       DONATELLO_DATABASE_URL: 'postgresql+asyncpg://postgres:postgres@donatello-db:5432/fastapi'
-    entrypoint: ./entrypoint
     healthcheck:
       test: curl -f http://localhost:8000/health || exit 1
       interval: 5m
