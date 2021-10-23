@@ -35,7 +35,7 @@ done
 
 echo
 echo "##########################################"
-echo "#### Welcome To RETEKTO Cloud Docker #####"
+echo "#### Welcome To Leonardo Cloud Docker ####"
 echo "##########################################"
 echo
 
