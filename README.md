@@ -9,4 +9,6 @@ Splinter service - Ui
 
 Leonardo service - Items
 
+Tommy worker - Cacher 
+
 Kimberly worker - Notifications (Queue)

@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "tommy"
+version = "0.1.0"
+description = ""
+authors = ["Nir Mantzur <nirooma@icloud.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+uvicorn = "^0.15.0"
+fastapi = "^0.70.0"
+redis = "^3.5.3"
+gunicorn = "^20.1.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

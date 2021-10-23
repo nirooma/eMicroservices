@@ -16,7 +16,7 @@ from app.schemas.token import Token
 from fastapi.security import OAuth2PasswordRequestForm
 from app.core.configuration_utils import config
 from app.utils import _response, decode_base64
-
+import requests
 logger = logging.getLogger(__name__)
 
 templates = Jinja2Templates(directory="templates")
