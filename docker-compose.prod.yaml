@@ -50,8 +50,7 @@ services:
     restart: always
 
   leonardo:
-#    image: nirooma/leonardo:latest
-    build: ./services/leonardo
+    image: nirooma/leonardo:latest
     container_name: leonardo
     command: daphne --bind 0.0.0.0 --port 8002 core.asgi:application
     environment:
@@ -70,8 +69,8 @@ services:
 
 ############### splinter ###################
   splinter:
-#    image: nirooma/splinter:latest # Use this line for production mode. M1 issue.
-    build: ./services/splinter # Don't use this one in production mode.
+    image: nirooma/splinter:latest # Use this line for production mode. M1 issue.
+#    build: ./services/splinter # Don't use this one in production mode.
     container_name: splinter
     environment:
       SPLINTER_SERVICE_URL: 'http://localhost:3000'
@@ -81,7 +80,7 @@ services:
 
 ################# kimberly ##################
   kimberly:
-    build: ./workers/kimberly
+    image: nirooma/kimberly:latest
     command: python main.py
     container_name: kimberly
     environment:
@@ -115,8 +114,7 @@ services:
     restart: always
 
   michelangelo:
-#    image: nirooma/michelangelo:latest
-    build: ./services/michelangelo
+    image: nirooma/michelangelo:latest
     container_name: michelangelo
     command: gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8001
     environment:
@@ -172,8 +170,7 @@ services:
     restart: always
 
   donatello:
-#    image: nirooma/donatello:latest
-    build: ./services/donatello
+    image: nirooma/donatello:latest
     container_name: donatello
     command: gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
     environment:
