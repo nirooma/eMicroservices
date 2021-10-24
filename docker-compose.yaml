@@ -189,9 +189,10 @@ services:
     restart: always
 
   michelangelo-worker:
-    build:
-      context: ./services/michelangelo
-      dockerfile: Dockerfile.dev
+    image: nirooma/michelangelo:latest
+#    build:
+#      context: ./services/michelangelo
+#      dockerfile: Dockerfile.dev
     container_name: michelangelo-worker
     command: python worker.py
     environment:
@@ -205,9 +206,10 @@ services:
       - michelangelo
 
   michelangelo:
-    build:
-      context: ./services/michelangelo
-      dockerfile: Dockerfile.dev
+    image: nirooma/michelangelo:latest
+#    build:
+#      context: ./services/michelangelo
+#      dockerfile: Dockerfile.dev
     container_name: michelangelo
     command: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 8001
     environment:
