@@ -146,9 +146,7 @@ services:
 
 ############### splinter ###################
   splinter:
-    build:
-      context: ./services/splinter
-      dockerfile: Dockerfile.dev
+    image: nirooma/splinter:latest
     command: yarn run dev
     container_name: splinter
     environment: *common-variables
@@ -207,9 +205,6 @@ services:
 
   michelangelo:
     image: nirooma/michelangelo:latest
-#    build:
-#      context: ./services/michelangelo
-#      dockerfile: Dockerfile.dev
     container_name: michelangelo
     command: uvicorn main:app --reload --workers 1 --host 0.0.0.0 --port 8001
     environment:

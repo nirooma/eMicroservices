@@ -72,8 +72,8 @@ services:
 
 ############### splinter ###################
   splinter:
-#    image: nirooma/splinter:latest # Use this line for production mode. M1 issue.
-    build: ./services/splinter # Don't use this one in production mode.
+    image: nirooma/splinter:latest # Use this line for production mode. M1 issue.
+#    build: ./services/splinter # Don't use this one in production mode.
     container_name: splinter
     command: ["yarn", "start"]
     environment:
