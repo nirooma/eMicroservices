@@ -96,8 +96,6 @@ services:
       RABBITMQ_URL: 'amqp://rabbitmq:5672'
       #  RABBITMQ_URL: 'amqps://naqfalzf:TvAk76rEr3GdWuGFT91f4W2SIUCMhDkK@cow.rmq2.cloudamqp.com/naqfalzf'
       APP_ENVIRONMENT: 'development'
-    env_file:
-      - "/Users/nirmansour/.pems/eMicroservices.txt"
     depends_on:
       - rabbitmq
 
