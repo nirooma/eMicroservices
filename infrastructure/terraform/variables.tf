@@ -23,7 +23,3 @@ variable "availability_zones" {
 
 ######## load balancer ###########
 ############################
-variable "vpc_id" {
-  description = "ID od VPC"
-  type = string
-}
