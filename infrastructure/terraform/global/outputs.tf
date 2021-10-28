@@ -1,4 +1,3 @@
-############ networking ############
 output "vpc_id" {
   value = aws_vpc.eMicroservices-vpc.id
 }
