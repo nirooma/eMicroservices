@@ -25,7 +25,7 @@ services:
     restart: always
 
   nginx:
-    build: ./infrastructure/nginx
+    image: nirooma/nginx:latest
     container_name: nginx
     ports:
       - "80:80"
