@@ -3,5 +3,5 @@ resource "aws_lb" "load_balancer" {
   load_balancer_type = "application"
   internal           = false
   security_groups    = [aws_security_group.load-balancer.id]
-  subnets            = [aws_subnet.public-subnet-1, aws_subnet.public-subnet-2]
+  subnets            = [aws_subnet.public-subnet-1.id, aws_subnet.public-subnet-2.id]
 }
