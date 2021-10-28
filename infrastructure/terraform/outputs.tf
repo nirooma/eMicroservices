@@ -13,7 +13,7 @@ output "instance_public_dns" {
   value       = aws_instance.app_server.public_dns
 }
 
-output "instance_connection" {
+output "instance_key_name" {
   description = "Connection address of the EC2 instance"
-  value       = aws_instance.app_server.connection
+  value       = aws_instance.app_server.key_name
 }
