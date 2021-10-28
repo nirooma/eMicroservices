@@ -26,7 +26,3 @@ output "private_subnet_1_id" {
 output "private_subnet_2_id" {
   value = aws_subnet.private-subnet-2.id
 }
-
-output "load_balancer_dns" {
-  value = aws_lb.load_balancer.dns_name
-}
