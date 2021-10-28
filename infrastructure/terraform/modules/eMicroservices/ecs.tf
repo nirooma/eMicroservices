@@ -25,9 +25,6 @@ resource "aws_launch_configuration" "ecs" {
   iam_instance_profile        = aws_iam_instance_profile.ecs.name
   associate_public_ip_address = true
   user_data                   = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.eMicroservices-cluster.name} >> /etc/ecs/ecs.config"
-  tags = {
-    Name = "eMicroservices"
-  }
 }
 
 resource "aws_autoscaling_group" "ecs-cluster" {
