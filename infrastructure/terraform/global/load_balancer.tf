@@ -7,10 +7,10 @@ resource "aws_lb" "load_balancer" {
 }
 
 resource "aws_alb_target_group" "default-target-group" {
-  name     = "${var.environment_name}-nginx-tg"
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.eMicroservices-vpc.id
+  name       = "${var.environment_name}-nginx-tg"
+  port       = 80
+  protocol   = "HTTP"
+  vpc_id     = aws_vpc.eMicroservices-vpc.id
   depends_on = [aws_lb.load_balancer]
 }
 

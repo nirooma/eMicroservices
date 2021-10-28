@@ -1,6 +1,6 @@
 data "aws_ami" "ecs-ami" {
   most_recent = true
-  owners = ["amazon"]
+  owners      = ["amazon"]
 
   filter {
     name   = "name"
@@ -20,7 +20,6 @@ resource "aws_launch_configuration" "ecs" {
   name                        = var.environment_name
   image_id                    = data.aws_ami.ecs-ami.id
   instance_type               = var.instance_type
-  key_name = "frankfurt"
   security_groups             = [var.ecs_security_group_id]
   iam_instance_profile        = aws_iam_instance_profile.ecs.name
   associate_public_ip_address = true
@@ -29,9 +28,9 @@ resource "aws_launch_configuration" "ecs" {
 
 resource "aws_autoscaling_group" "ecs-cluster" {
   name                 = "${var.environment_name}-auto-scaling-group"
-  min_size             = var.autoscale_min
-  max_size             = var.autoscale_max
-  desired_capacity     = var.autoscale_desired
+  min_size             = var.autoscaling_min
+  max_size             = var.autoscaling_max
+  desired_capacity     = var.autoscaling_desired
   health_check_type    = "EC2"
   launch_configuration = aws_launch_configuration.ecs.name
   vpc_zone_identifier  = [var.private_subnet_1_id, var.private_subnet_2_id]
