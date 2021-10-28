@@ -1,3 +1,3 @@
-#output "load_balancer_dns" {
-#  value = module.global.
-#}
+output "load_balancer_dns" {
+  value = module.global.load_balancer_dns
+}
