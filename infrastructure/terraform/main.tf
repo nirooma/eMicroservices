@@ -15,7 +15,7 @@ provider "aws" {
 resource "aws_instance" "app_server" {
   ami           = var.instance_ami
   instance_type = var.instance_type
-  key_name = "frankfurt.cer"
+  key_name = "frankfurt"
 
   tags = {
     Name = "ExampleAppServerInstance"
