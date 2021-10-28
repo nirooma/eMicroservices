@@ -12,3 +12,8 @@ output "instance_public_dns" {
   description = "Public DNS address of the EC2 instance"
   value       = aws_instance.app_server.public_dns
 }
+
+output "instance_connection" {
+  description = "Connection address of the EC2 instance"
+  value       = aws_instance.app_server.connection
+}
