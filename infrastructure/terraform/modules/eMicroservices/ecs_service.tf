@@ -12,7 +12,15 @@ resource "aws_ecs_task_definition" "nginx" {
       "portMappings": [
         {
           "containerPort": 80
+        },
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "${aws_cloudwatch_log_group.nginx-log-group.name}",
+          "awslogs-region": "eu-central-1",
+          "awslogs-stream-prefix": "${aws_cloudwatch_log_stream.nginx-log-stream.name}"
         }
+      }
       ]
     }
 ]
