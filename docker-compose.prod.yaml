@@ -38,7 +38,7 @@ services:
     volumes:
       - staticfiles_:/opt/leonardo/staticfiles
 
-################ leonardo #################
+  ################ leonardo #################
   leonardo-db:
     image: postgres:13.4-alpine
     container_name: leonardo-db
@@ -70,19 +70,19 @@ services:
     expose:
       - 8002
 
-############### splinter ###################
+  ############### splinter ###################
   splinter:
     image: nirooma/splinter:latest # Use this line for production mode. M1 issue.
-#    build: ./services/splinter # Don't use this one in production mode.
+    #    build: ./services/splinter # Don't use this one in production mode.
     container_name: splinter
-    command: ["yarn", "start"]
+    command: [ "yarn", "start" ]
     environment:
       SPLINTER_SERVICE_URL: 'http://localhost:3000'
       DONATELLO_SERVICE_URL: 'http://donatello:8000'
       MICHELANGELO_SERVICE_URL: 'http://michelangelo:8001'
       LEONARDO_SERVICE_URL: 'http://leonardo:8002'
 
-################# kimberly ##################
+  ################# kimberly ##################
   kimberly:
     image: nirooma/kimberly:latest
     command: python main.py
@@ -99,7 +99,7 @@ services:
     depends_on:
       - rabbitmq
 
-################# michelangelo ###################
+  ################# michelangelo ###################
   michelangelo-db:
     image: postgres:13.4-alpine
     container_name: michelangelo-db
@@ -155,7 +155,7 @@ services:
       - michelangelo
       - michelangelo-db
 
-################ donatello ###################
+  ################ donatello ###################
   donatello-db:
     image: postgres:13.4-alpine
     container_name: donatello-db
@@ -194,7 +194,7 @@ services:
     depends_on:
       - donatello-db
 
-############### tommy ##############
+  ############### tommy ##############
   tommy:
     image: nirooma/tommy:latest
     container_name: tommy
