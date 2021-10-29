@@ -3,7 +3,7 @@ resource "aws_ecs_task_definition" "nginx" {
   container_definitions = <<EOF
 [
     {
-      "name": "talk-booking-app",
+      "name": "nginx",
       "image": "nirooma/nginx:latest",
       "cpu": 1000,
       "memory": 950,
