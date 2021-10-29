@@ -22,3 +22,9 @@ output "private_subnet_2_id" {
 output "load_balancer_dns" {
   value = aws_lb.load_balancer.dns_name
 }
+output "aws_alb_target_group_arn" {
+  value = aws_alb_target_group.default-target-group.arn
+}
+output "ecs_alb_http_listener" {
+  value = aws_alb_listener.ecs-alb-http-listener
+}

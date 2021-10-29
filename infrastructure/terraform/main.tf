@@ -11,4 +11,6 @@ module "eMicroservices" {
   ecs_security_group_id = module.global.ecs_security_group_id
   private_subnet_1_id   = module.global.private_subnet_1_id
   private_subnet_2_id   = module.global.private_subnet_2_id
+  aws_alb_target_group_arn = module.global.aws_alb_target_group_arn
+  ecs_alb_http_listener = module.global.ecs_alb_http_listener
 }

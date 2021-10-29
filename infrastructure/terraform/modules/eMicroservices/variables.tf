@@ -24,3 +24,9 @@ variable "private_subnet_1_id" {
 variable "private_subnet_2_id" {
   type = string
 }
+variable "aws_alb_target_group_arn" {
+  type = string
+}
+variable "ecs_alb_http_listener" {
+  type = string
+}
