@@ -17,3 +17,8 @@ resource "aws_cloudwatch_log_stream" "leonardo-log-stream" {
   name           = "${var.environment_name}-leonardo"
   log_group_name = aws_cloudwatch_log_group.gen-log-group.name
 }
+
+resource "aws_cloudwatch_log_stream" "leonardo-db-log-stream" {
+  name           = "${var.environment_name}-leonardo-db"
+  log_group_name = aws_cloudwatch_log_group.gen-log-group.name
+}
