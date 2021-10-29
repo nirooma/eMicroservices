@@ -29,7 +29,7 @@ jobs:
 
       - name: Docker Image Build
         run: |
-          cd workers/kimberly
+          cd infrastructure/nginx
           docker build --cache-from $NGINX_IMAGE_NAME_IN_DOCKERHUB:latest --tag $NGINX_IMAGE_NAME_IN_DOCKERHUB:latest --build-arg BUILDKIT_INLINE_CACHE=1 .
       - name: Log in to Docker Hub
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
