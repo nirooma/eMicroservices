@@ -22,7 +22,30 @@ resource "aws_ecs_task_definition" "app" {
           "awslogs-stream-prefix": "${aws_cloudwatch_log_stream.nginx-log-stream.name}"
         }
       }
+    },
+  {
+    "name": "splinter",
+    "image": "nirooma/splinter:latest",
+    "cpu": 1000,
+    "command": ["yarn", "start"],
+    "memory": 950,
+    "essential": true,
+    "environment": [],
+    "portMappings": [
+      {
+        "containerPort": 3000
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${aws_cloudwatch_log_group.splinter-log-group.name}",
+        "awslogs-region": "eu-central-1",
+        "awslogs-stream-prefix": "${aws_cloudwatch_log_stream.splinter-log-stream.name}"
+      }
     }
+ }
+
 ]
 EOF
   lifecycle {
@@ -31,11 +54,11 @@ EOF
 }
 
 resource "aws_ecs_service" "eMicroservices-service" {
-  name            = var.environment_name
-  cluster         = aws_ecs_cluster.eMicroservices-cluster.name
-  task_definition = aws_ecs_task_definition.app.family
-  iam_role        = aws_iam_role.ecs-service-role.arn
-  desired_count   = 1
+  name                               = var.environment_name
+  cluster                            = aws_ecs_cluster.eMicroservices-cluster.name
+  task_definition                    = aws_ecs_task_definition.app.family
+  iam_role                           = aws_iam_role.ecs-service-role.arn
+  desired_count                      = 1
   deployment_minimum_healthy_percent = 50
 
   load_balancer {
