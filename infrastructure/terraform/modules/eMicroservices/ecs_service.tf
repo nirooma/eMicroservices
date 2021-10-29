@@ -1,18 +1,19 @@
-resource "aws_ecs_task_definition" "tommy" {
+resource "aws_ecs_task_definition" "nginx" {
   family                = "${var.environment_name}-nginx"
   container_definitions = <<EOF
 [
     {
-      "name": "nginx",
+      "name": "talk-booking-app",
       "image": "nirooma/nginx:latest",
       "cpu": 1000,
       "memory": 950,
       "essential": true,
+      "environment": [],
       "portMappings": [
         {
           "containerPort": 80
         }
-      ],
+      ]
     }
 ]
 EOF
