@@ -58,7 +58,7 @@ resource "aws_ecs_task_definition" "app" {
       {"name": "SQL_USER", "value": "postgres"},
       {"name": "SQL_PASSWORD", "value": "postgres"},
       {"name": "SQL_HOST", "value": "leonardo-db"},
-      {"name": "SQL_PORT", "value": 5432},
+      {"name": "SQL_PORT", "value": "5432"}
     ],
     "portMappings": [
       {
@@ -76,16 +76,15 @@ resource "aws_ecs_task_definition" "app" {
  },
   {
     "name": "leonardo-db",
-    "image": "postgres:13.4-alpine",
+    "image": "postgres:13.4-alpine:latest",
     "cpu": 1000,
     "memory": 950,
     "essential": true,
     "environment": [
         {"name": "POSTGRES_DB", "value": "fastapi"},
         {"name": "POSTGRES_USER", "value": "postgres"},
-        {"name": "POSTGRES_PASSWORD", "value": "postgres"},
+        {"name": "POSTGRES_PASSWORD", "value": "postgres"}
     ],
-    "portMappings": [],
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
