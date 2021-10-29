@@ -17,7 +17,7 @@ resource "aws_ecs_task_definition" "app" {
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "${aws_cloudwatch_log_group.nginx-log-group.name}",
+          "awslogs-group": "${aws_cloudwatch_log_group.gen-log-group.name}",
           "awslogs-region": "eu-central-1",
           "awslogs-stream-prefix": "${aws_cloudwatch_log_stream.nginx-log-stream.name}"
         }
@@ -39,7 +39,29 @@ resource "aws_ecs_task_definition" "app" {
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
-        "awslogs-group": "${aws_cloudwatch_log_group.splinter-log-group.name}",
+        "awslogs-group": "${aws_cloudwatch_log_group.gen-log-group.name}",
+        "awslogs-region": "eu-central-1",
+        "awslogs-stream-prefix": "${aws_cloudwatch_log_stream.splinter-log-stream.name}"
+      }
+    }
+ },
+  {
+    "name": "leonardo",
+    "image": "nirooma/leonardo:latest",
+    "cpu": 1000,
+    "command": ["daphne", "--bind", "0.0.0.0", "--port", "8002", "core.asgi:application"],
+    "memory": 950,
+    "essential": true,
+    "environment": [],
+    "portMappings": [
+      {
+        "containerPort": 8002
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${aws_cloudwatch_log_group.gen-log-group.name}",
         "awslogs-region": "eu-central-1",
         "awslogs-stream-prefix": "${aws_cloudwatch_log_stream.splinter-log-stream.name}"
       }
