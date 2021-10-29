@@ -25,6 +25,6 @@ output "load_balancer_dns" {
 output "aws_alb_target_group_arn" {
   value = aws_alb_target_group.default-target-group.arn
 }
-output "aws_alb_listener" {
-  value = aws_alb_listener
+output "ecs_alb_http_listener" {
+  value = aws_alb_listener.ecs-alb-http-listener
 }

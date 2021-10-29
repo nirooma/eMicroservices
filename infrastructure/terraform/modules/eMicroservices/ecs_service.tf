@@ -35,7 +35,7 @@ resource "aws_ecs_service" "eMicroservices-service" {
     container_name   = "nginx"
     container_port   = 80
   }
-  depends_on = [var.aws_alb_listener.ecs-alb-http-listener]
+  depends_on = [var.ecs_alb_http_listener]
 
   lifecycle {
     ignore_changes = [task_definition]
