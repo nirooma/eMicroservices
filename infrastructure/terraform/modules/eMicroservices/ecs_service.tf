@@ -21,7 +21,6 @@ resource "aws_ecs_task_definition" "nginx" {
           "awslogs-stream-prefix": "${aws_cloudwatch_log_stream.nginx-log-stream.name}"
         }
       }
-      ]
     }
 ]
 EOF
