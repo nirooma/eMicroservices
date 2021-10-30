@@ -7,7 +7,7 @@ resource "aws_ecs_task_definition" "app" {
       "image": "nirooma/nginx:latest",
       "cpu": 1000,
       "memory": 950,
-      "links": ["django-app", "client"],
+      "links": ["splinter", "leonardo"],
       "essential": true,
       "environment": [],
       "portMappings": [
