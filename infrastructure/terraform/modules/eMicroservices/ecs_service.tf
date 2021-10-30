@@ -1,9 +1,5 @@
 resource "aws_ecs_task_definition" "app" {
   family = "${var.environment_name}-app"
-  volume {
-    name      = "static_volume"
-    host_path = "/opt/leonardo/staticfiles"
-  }
   container_definitions = <<EOF
 [
    {
@@ -180,6 +176,10 @@ resource "aws_ecs_task_definition" "app" {
    }
 ]
 EOF
+  volume {
+    name      = "static_volume"
+    host_path = "/opt/leonardo/staticfiles/"
+  }
   lifecycle {
     ignore_changes = all
   }
