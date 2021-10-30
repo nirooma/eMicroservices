@@ -1,28 +1,43 @@
 {
-  "name": "splinter",
+  "name": "next-ecommerce",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "export NODE_OPTIONS=--openssl-legacy-provider; next build",
     "start": "next start",
-    "lint": "next lint"
+    "export": "next build && next export"
   },
+  "keywords": [
+    "react",
+    "reactjs",
+    "ecommerce",
+    "nextjs",
+    "next"
+  ],
   "dependencies": {
-    "css-loader": "^6.5.0",
-    "less": "^4.1.2",
-    "less-loader": "^10.2.0",
-    "mini-css-extract-plugin": "^2.4.3",
-    "next": "11.1.2",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "rsuite": "^5.0.3",
-    "webpack": "^5.60.0"
+    "lodash": "^4.17.21",
+    "next": "^11.1.0",
+    "next-redux-wrapper": "^6.0.2",
+    "rc-slider": "^9.3.1",
+    "react": "^17.0.2",
+    "react-dom": "16.13.1",
+    "react-hook-form": "^6.8.2",
+    "react-rater": "^5.1.1",
+    "react-redux": "^7.2.1",
+    "react-select": "^3.1.0",
+    "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-persist": "^6.0.0",
+    "redux-thunk": "^2.3.0",
+    "reselect": "^4.0.0",
+    "sass": "^1.26.10",
+    "swiper": "^6.5.1",
+    "swr": "^0.3.2",
+    "use-onclickoutside": "^0.3.1"
   },
   "devDependencies": {
-    "@types/react": "17.0.31",
-    "eslint": "8.0.1",
-    "eslint-config-next": "11.1.2",
-    "typescript": "4.4.4"
+    "fslightbox-react": "^1.5.0",
+    "node-fetch": "^2.6.1"
   }
 }
