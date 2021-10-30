@@ -2,6 +2,28 @@ resource "aws_ecs_task_definition" "app" {
   family                = "${var.environment_name}-app"
   container_definitions = <<EOF
 [
+    {
+      "name": "nginx",
+      "image": "nirooma/nginx:latest",
+      "cpu": 1000,
+      "memory": 950,
+      "links": ["django-app", "client"],
+      "essential": true,
+      "environment": [],
+      "portMappings": [
+        {
+          "containerPort": 80
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "${aws_cloudwatch_log_group.gen-log-group.name}",
+          "awslogs-region": "eu-central-1",
+          "awslogs-stream-prefix": "${aws_cloudwatch_log_stream.nginx-log-stream.name}"
+        }
+      }
+    },
   {
     "name": "splinter",
     "image": "nirooma/splinter:latest",
@@ -58,7 +80,6 @@ resource "aws_ecs_task_definition" "app" {
   "image": "postgres:13.4-alpine:latest",
   "cpu": 1000,
   "memory": 950,
-  "links": ["leonardo-db"],
   "essential": true,
   "environment": [
       {"name": "POSTGRES_DB", "value": "fastapi"},
@@ -73,27 +94,6 @@ resource "aws_ecs_task_definition" "app" {
       "awslogs-stream-prefix": "${aws_cloudwatch_log_stream.leonardo-db-log-stream.name}"
     }
   }
- },
- {
-    "name": "nginx",
-    "image": "nirooma/nginx:latest",
-    "cpu": 1000,
-    "memory": 950,
-    "essential": true,
-    "environment": [],
-    "portMappings": [
-      {
-        "containerPort": 80
-      }
-    ],
-    "logConfiguration": {
-      "logDriver": "awslogs",
-      "options": {
-        "awslogs-group": "${aws_cloudwatch_log_group.gen-log-group.name}",
-        "awslogs-region": "eu-central-1",
-        "awslogs-stream-prefix": "${aws_cloudwatch_log_stream.nginx-log-stream.name}"
-      }
-    }
  }
 ]
 EOF
