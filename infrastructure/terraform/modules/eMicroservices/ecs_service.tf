@@ -7,7 +7,7 @@ resource "aws_ecs_task_definition" "app" {
       "image": "nirooma/nginx:latest",
       "cpu": 1000,
       "memory": 950,
-      "links": ["splinter", "leonardo"],
+      "links": ["splinter", "leonardo", "rabbitmq"],
       "essential": true,
       "environment": [],
       "portMappings": [
@@ -95,7 +95,23 @@ resource "aws_ecs_task_definition" "app" {
       "awslogs-stream-prefix": "${aws_cloudwatch_log_stream.leonardo-db-log-stream.name}"
     }
   }
- }
+ },
+  {
+    "name": "rabbitmq",
+    "image": "rabbitmq:3.9.4-management:latest",
+    "cpu": 1000,
+    "memory": 950,
+    "essential": true,
+    "environment": [],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${aws_cloudwatch_log_group.gen-log-group.name}",
+        "awslogs-region": "eu-central-1",
+        "awslogs-stream-prefix": "${aws_cloudwatch_log_stream.rabbitmq-log-stream.name}"
+      }
+    }
+ },
 ]
 EOF
   lifecycle {
