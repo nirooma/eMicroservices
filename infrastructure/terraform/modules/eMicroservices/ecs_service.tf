@@ -2,59 +2,6 @@ resource "aws_ecs_task_definition" "app" {
   family                = "${var.environment_name}-app"
   container_definitions = <<EOF
 [
-#   {
-#      "name":"nginx",
-#      "image":"nirooma/nginx:latest",
-#      "cpu":10,
-#      "memory":128,
-#      "links":[
-#         "splinter",
-#         "leonardo",
-#         "rabbitmq"
-#      ],
-#      "essential":true,
-#      "environment":[],
-#      "portMappings":[
-#         {
-#            "containerPort":80
-#         }
-#      ],
-#      "logConfiguration":{
-#         "logDriver":"awslogs",
-#         "options":{
-#            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
-#            "awslogs-region":"eu-central-1",
-#            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.nginx-log-stream.name}"
-#         }
-#      }
-#   },
-#   {
-#      "name":"splinter",
-#      "image":"nirooma/splinter:latest",
-#      "cpu":100,
-#      "command":[
-#         "yarn",
-#         "start"
-#      ],
-#      "memory":128,
-#      "essential":true,
-#      "environment":[
-#
-#      ],
-#      "portMappings":[
-#         {
-#            "containerPort":3000
-#         }
-#      ],
-#      "logConfiguration":{
-#         "logDriver":"awslogs",
-#         "options":{
-#            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
-#            "awslogs-region":"eu-central-1",
-#            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.splinter-log-stream.name}"
-#         }
-#      }
-#   },
    {
       "name":"leonardo",
       "image":"nirooma/leonardo:latest",
@@ -141,24 +88,6 @@ resource "aws_ecs_task_definition" "app" {
          }
       }
    }
-#   {
-#      "name":"rabbitmq",
-#      "image":"rabbitmq:3.9.4-management:latest",
-#      "cpu":1000,
-#      "memory":500,
-#      "essential":true,
-#      "environment":[
-#
-#      ],
-#      "logConfiguration":{
-#         "logDriver":"awslogs",
-#         "options":{
-#            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
-#            "awslogs-region":"eu-central-1",
-#            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.rabbitmq-log-stream.name}"
-#         }
-#      }
-#   }
 ]
 EOF
   lifecycle {
