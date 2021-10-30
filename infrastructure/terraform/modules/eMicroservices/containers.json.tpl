@@ -51,15 +51,15 @@
       "mountPoints":[
          {
             "containerPath":"/opt/leonardo/staticfiles",
-            "sourceVolume":"static_volume"
+            "sourceVolume":"staticfiles"
          }
       ],
       "logConfiguration":{
          "logDriver":"awslogs",
          "options":{
-            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
+            "awslogs-group":"${aws_cloudwatch_log_group}",
             "awslogs-region":"eu-central-1",
-            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.leonardo-log-stream.name}"
+            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream_leonardo}"
          }
       }
    },
@@ -86,9 +86,9 @@
       "logConfiguration":{
          "logDriver":"awslogs",
          "options":{
-            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
+            "awslogs-group":"${aws_cloudwatch_log_group}",
             "awslogs-region":"eu-central-1",
-            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.leonardo-db-log-stream.name}"
+            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream_leonardo}"
          }
       }
    },
@@ -98,15 +98,13 @@
       "cpu":10,
       "memory":256,
       "essential":true,
-      "environment":[
-
-      ],
+      "environment":[],
       "logConfiguration":{
          "logDriver":"awslogs",
          "options":{
-            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
+            "awslogs-group":"${aws_cloudwatch_log_group}",
             "awslogs-region":"eu-central-1",
-            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.rabbitmq-log-stream.name}"
+            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream_rabbitmq}"
          }
       }
    },
@@ -131,9 +129,9 @@
       "logConfiguration":{
          "logDriver":"awslogs",
          "options":{
-            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
+            "awslogs-group":"${aws_cloudwatch_log_group}",
             "awslogs-region":"eu-central-1",
-            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.splinter-log-stream.name}"
+            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream_splinter}"
          }
       }
    },
@@ -148,9 +146,7 @@
          "rabbitmq"
       ],
       "essential":true,
-      "environment":[
-
-      ],
+      "environment":[],
       "portMappings":[
          {
             "containerPort":80
@@ -162,15 +158,15 @@
       "mountPoints":[
          {
             "containerPath":"/opt/leonardo/staticfiles",
-            "sourceVolume":"static_volume"
+            "sourceVolume":"staticfiles"
          }
       ],
       "logConfiguration":{
          "logDriver":"awslogs",
          "options":{
-            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
+            "awslogs-group":"${aws_cloudwatch_log_group}",
             "awslogs-region":"eu-central-1",
-            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.nginx-log-stream.name}"
+            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream_nginx}"
          }
       }
    }

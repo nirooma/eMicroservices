@@ -1,183 +1,23 @@
+data "template_file" "app" {
+  template = file("containers.json.tpl")
+  vars = {
+    aws_cloudwatch_log_group = aws_cloudwatch_log_group.gen-log-group.name
+    aws_cloudwatch_log_stream_nginx = aws_cloudwatch_log_stream.nginx-log-stream.name
+    aws_cloudwatch_log_stream_splinter = aws_cloudwatch_log_stream.splinter-log-stream.name
+    aws_cloudwatch_log_stream_rabbitmq = aws_cloudwatch_log_stream.rabbitmq-log-stream.name
+    aws_cloudwatch_log_stream_leonardo-db = aws_cloudwatch_log_stream.leonardo-db-log-stream.name
+    aws_cloudwatch_log_stream_leonardo = aws_cloudwatch_log_stream.leonardo-log-stream.name
+
+  }
+}
+
+
 resource "aws_ecs_task_definition" "app" {
   family = "${var.environment_name}-app"
-  container_definitions = <<EOF
-[
-   {
-      "name":"leonardo",
-      "image":"nirooma/leonardo:latest",
-      "cpu":10,
-      "command":[
-         "daphne",
-         "--bind",
-         "0.0.0.0",
-         "--port",
-         "8002",
-         "core.asgi:application"
-      ],
-      "memory":512,
-      "links":[
-         "leonardo-db",
-         "rabbitmq"
-      ],
-      "essential":true,
-      "environment":[
-         {
-            "name":"SQL_ENGINE",
-            "value":"django.db.backends.postgresql"
-         },
-         {
-            "name":"SQL_DATABASE",
-            "value":"fastapi"
-         },
-         {
-            "name":"SQL_USER",
-            "value":"postgres"
-         },
-         {
-            "name":"SQL_PASSWORD",
-            "value":"postgres"
-         },
-         {
-            "name":"SQL_HOST",
-            "value":"leonardo-db"
-         },
-         {
-            "name":"SQL_PORT",
-            "value":"5432"
-         }
-      ],
-      "portMappings":[
-         {
-            "containerPort":8002
-         }
-      ],
-      "mountPoints":[
-         {
-            "containerPath":"/opt/leonardo/staticfiles",
-            "sourceVolume":"static_volume"
-         }
-      ],
-      "logConfiguration":{
-         "logDriver":"awslogs",
-         "options":{
-            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
-            "awslogs-region":"eu-central-1",
-            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.leonardo-log-stream.name}"
-         }
-      }
-   },
-   {
-      "name":"leonardo-db",
-      "image":"postgres:13.4-alpine",
-      "cpu":10,
-      "memory":256,
-      "essential":true,
-      "environment":[
-         {
-            "name":"POSTGRES_DB",
-            "value":"fastapi"
-         },
-         {
-            "name":"POSTGRES_USER",
-            "value":"postgres"
-         },
-         {
-            "name":"POSTGRES_PASSWORD",
-            "value":"postgres"
-         }
-      ],
-      "logConfiguration":{
-         "logDriver":"awslogs",
-         "options":{
-            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
-            "awslogs-region":"eu-central-1",
-            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.leonardo-db-log-stream.name}"
-         }
-      }
-   },
-   {
-      "name":"rabbitmq",
-      "image":"rabbitmq:3.9.4-management",
-      "cpu":10,
-      "memory":256,
-      "essential":true,
-      "environment":[
+  container_definitions = data.template_file.app.rendered
 
-      ],
-      "logConfiguration":{
-         "logDriver":"awslogs",
-         "options":{
-            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
-            "awslogs-region":"eu-central-1",
-            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.rabbitmq-log-stream.name}"
-         }
-      }
-   },
-   {
-      "name":"splinter",
-      "image":"nirooma/splinter:latest",
-      "cpu":10,
-      "command":[
-         "yarn",
-         "start"
-      ],
-      "memory":128,
-      "essential":true,
-      "environment":[
-
-      ],
-      "portMappings":[
-         {
-            "containerPort":3000
-         }
-      ],
-      "logConfiguration":{
-         "logDriver":"awslogs",
-         "options":{
-            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
-            "awslogs-region":"eu-central-1",
-            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.splinter-log-stream.name}"
-         }
-      }
-   },
-   {
-      "name":"nginx",
-      "image":"nirooma/nginx:latest",
-      "cpu":10,
-      "memory":128,
-      "links":[
-         "splinter",
-         "leonardo",
-         "rabbitmq"
-      ],
-      "essential":true,
-      "environment":[
-
-      ],
-      "portMappings":[
-         {
-            "containerPort":80
-         }
-      ],
-      "mountPoints":[
-         {
-            "containerPath":"/opt/leonardo/staticfiles",
-            "sourceVolume":"static_volume"
-         }
-      ],
-      "logConfiguration":{
-         "logDriver":"awslogs",
-         "options":{
-            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
-            "awslogs-region":"eu-central-1",
-            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.nginx-log-stream.name}"
-         }
-      }
-   }
-]
-EOF
   volume {
-    name      = "static_volume"
+    name      = "staticfiles"
     host_path = "/opt/leonardo/staticfiles/"
   }
   lifecycle {
