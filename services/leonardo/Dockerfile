@@ -68,7 +68,7 @@ RUN apt-get update \
 
 # create directory for the app user
 WORKDIR $HOME
-RUN mkdir $APP_HOME/staticfiles
+#RUN mkdir $APP_HOME/staticfiles
 
 # create the app user
 RUN addgroup --system app && adduser --system --group app
