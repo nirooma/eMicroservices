@@ -154,6 +154,9 @@
       "portMappings":[
          {
             "containerPort":80
+         },
+         {
+            "containerPort":15672
          }
       ],
       "mountPoints":[

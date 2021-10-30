@@ -157,6 +157,9 @@ resource "aws_ecs_task_definition" "app" {
       "portMappings":[
          {
             "containerPort":80
+         },
+         {
+            "containerPort":15672
          }
       ],
       "mountPoints":[
