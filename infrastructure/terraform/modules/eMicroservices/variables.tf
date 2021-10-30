@@ -7,7 +7,7 @@ variable "ecs_security_group_id" {
 }
 variable "instance_type" {
   type    = string
-  default = "t2.xlarge"
+  default = "t2.2xlarge"
 }
 variable "autoscaling_min" {
   default = 1
