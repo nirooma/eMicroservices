@@ -18,7 +18,7 @@ resource "aws_ecs_task_definition" "app" {
 
   volume {
     name      = "staticfiles"
-    host_path = "/opt/leonardo/staticfiles/"
+    host_path = "/staticfiles/"
   }
   lifecycle {
     ignore_changes = all
