@@ -74,12 +74,11 @@ resource "aws_ecs_task_definition" "app" {
     }
   }
  },
-{
+ {
     "name": "nginx",
     "image": "nirooma/nginx:latest",
     "cpu": 1000,
     "memory": 950,
-    "links": ["leonardo", "splinter"],
     "essential": true,
     "environment": [],
     "portMappings": [
