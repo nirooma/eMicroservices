@@ -53,7 +53,7 @@ resource "aws_ecs_task_definition" "app" {
          "options":{
             "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
             "awslogs-region":"eu-central-1",
-            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.splinter-log-stream.name}"
+            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.leonardo-log-stream.name}"
          }
       }
    }
