@@ -55,5 +55,6 @@ echo "### Running migrations ###"
 python manage.py migrate
 echo "### Migrations running completed ###"
 ls
-ls staticfiles
+cd staticfiles
+ls
 exec "$@"
