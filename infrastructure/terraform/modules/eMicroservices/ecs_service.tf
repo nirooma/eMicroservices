@@ -52,7 +52,7 @@ resource "aws_ecs_task_definition" "app" {
   "cpu": 1000,
   "command": ["daphne", "--bind", "0.0.0.0", "--port", "8002", "core.asgi:application"],
   "memory": 950,
-  "links": ["leonardo-db"]
+  "links": ["leonardo-db"],
   "essential": true,
   "environment": [
     {"name": "SQL_ENGINE", "value": "django.db.backends.postgresql"},
