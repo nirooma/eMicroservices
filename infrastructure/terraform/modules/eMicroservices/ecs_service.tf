@@ -16,8 +16,8 @@ resource "aws_ecs_task_definition" "app" {
       ],
       "memory":500,
       "links":[
-          "leonardo-db",
-          "rabbitmq"
+         "leonardo-db",
+         "rabbitmq"
       ],
       "essential":true,
       "environment":[
@@ -104,6 +104,59 @@ resource "aws_ecs_task_definition" "app" {
             "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.rabbitmq-log-stream.name}"
          }
       }
+   },
+   {
+      "name":"splinter",
+      "image":"nirooma/splinter:latest",
+      "cpu":100,
+      "command":[
+         "yarn",
+         "start"
+      ],
+      "memory":128,
+      "essential":true,
+      "environment":[
+
+      ],
+      "portMappings":[
+         {
+            "containerPort":3000
+         }
+      ],
+      "logConfiguration":{
+         "logDriver":"awslogs",
+         "options":{
+            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
+            "awslogs-region":"eu-central-1",
+            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.splinter-log-stream.name}"
+         }
+      }
+   },
+   {
+      "name":"nginx",
+      "image":"nirooma/nginx:latest",
+      "cpu":10,
+      "memory":128,
+      "links":[
+         "splinter",
+         "leonardo",
+         "rabbitmq"
+      ],
+      "essential":true,
+      "environment":[],
+      "portMappings":[
+         {
+            "containerPort":80
+         }
+      ],
+      "logConfiguration":{
+         "logDriver":"awslogs",
+         "options":{
+            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
+            "awslogs-region":"eu-central-1",
+            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.nginx-log-stream.name}"
+         }
+      }
    }
 ]
 EOF
@@ -122,8 +175,8 @@ resource "aws_ecs_service" "eMicroservices-service" {
 
   load_balancer {
     target_group_arn = var.aws_alb_target_group_arn
-    container_name   = "leonardo" # Change back to nginx
-    container_port   = 8002 # Change back to 80
+    container_name   = "nginx" # Change back to nginx
+    container_port   = 80 # Change back to 80
   }
   depends_on = [var.ecs_alb_http_listener]
 
