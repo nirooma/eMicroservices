@@ -105,7 +105,7 @@ resource "aws_ecs_service" "eMicroservices-service" {
 
   load_balancer {
     target_group_arn = var.aws_alb_target_group_arn
-    container_name   = "nginx"
+    container_name   = "leonardo"
     container_port   = 80
   }
   depends_on = [var.ecs_alb_http_listener]
