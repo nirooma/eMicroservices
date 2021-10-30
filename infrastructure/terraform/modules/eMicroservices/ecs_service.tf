@@ -1,5 +1,5 @@
 data "template_file" "app" {
-  template = file("./containers.json.tpl")
+  template = file("modules/eMicroservices/containers.json.tpl")
   vars = {
     aws_cloudwatch_log_group              = aws_cloudwatch_log_group.gen-log-group.name
     aws_cloudwatch_log_stream_nginx       = aws_cloudwatch_log_stream.nginx-log-stream.name
