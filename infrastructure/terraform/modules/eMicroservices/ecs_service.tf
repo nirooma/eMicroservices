@@ -78,7 +78,7 @@ resource "aws_ecs_task_definition" "app" {
  },
  {
   "name": "leonardo-db",
-  "image": "postgres:13.4-alpine:latest",
+  "image": "postgres:13.4-alpine",
   "cpu": 1000,
   "memory": 950,
   "essential": true,
