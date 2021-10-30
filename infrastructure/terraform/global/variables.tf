@@ -25,5 +25,5 @@ variable "environment_name" {
 }
 variable "domain" {
   description = "Domain for App"
-  type = string
+  type        = string
 }

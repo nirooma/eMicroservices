@@ -1,61 +1,8 @@
 [
    {
-      "name":"nginx",
-      "image":"nirooma/nginx:latest",
-      "cpu":10,
-      "memory":128,
-      "links":[
-         "splinter",
-         "leonardo",
-         "rabbitmq"
-      ],
-      "essential":true,
-      "environment":[],
-      "portMappings":[
-         {
-            "containerPort":80
-         }
-      ],
-      "logConfiguration":{
-         "logDriver":"awslogs",
-         "options":{
-            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
-            "awslogs-region":"eu-central-1",
-            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.nginx-log-stream.name}"
-         }
-      }
-   },
-   {
-      "name":"splinter",
-      "image":"nirooma/splinter:latest",
-      "cpu":100,
-      "command":[
-         "yarn",
-         "start"
-      ],
-      "memory":128,
-      "essential":true,
-      "environment":[
-
-      ],
-      "portMappings":[
-         {
-            "containerPort":3000
-         }
-      ],
-      "logConfiguration":{
-         "logDriver":"awslogs",
-         "options":{
-            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
-            "awslogs-region":"eu-central-1",
-            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.splinter-log-stream.name}"
-         }
-      }
-   },
-   {
       "name":"leonardo",
       "image":"nirooma/leonardo:latest",
-      "cpu":500,
+      "cpu":10,
       "command":[
          "daphne",
          "--bind",
@@ -64,9 +11,10 @@
          "8002",
          "core.asgi:application"
       ],
-      "memory":500,
+      "memory":512,
       "links":[
-         "leonardo-db"
+         "leonardo-db",
+         "rabbitmq"
       ],
       "essential":true,
       "environment":[
@@ -100,20 +48,26 @@
             "containerPort":8002
          }
       ],
+      "mountPoints":[
+         {
+            "containerPath":"/opt/leonardo/staticfiles",
+            "sourceVolume":"static_volume"
+         }
+      ],
       "logConfiguration":{
          "logDriver":"awslogs",
          "options":{
             "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
             "awslogs-region":"eu-central-1",
-            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.splinter-log-stream.name}"
+            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.leonardo-log-stream.name}"
          }
       }
    },
    {
       "name":"leonardo-db",
-      "image":"postgres:13.4-alpine:latest",
-      "cpu":500,
-      "memory":500,
+      "image":"postgres:13.4-alpine",
+      "cpu":10,
+      "memory":256,
       "essential":true,
       "environment":[
          {
@@ -140,9 +94,9 @@
    },
    {
       "name":"rabbitmq",
-      "image":"rabbitmq:3.9.4-management:latest",
-      "cpu":1000,
-      "memory":500,
+      "image":"rabbitmq:3.9.4-management",
+      "cpu":10,
+      "memory":256,
       "essential":true,
       "environment":[
 
@@ -153,6 +107,67 @@
             "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
             "awslogs-region":"eu-central-1",
             "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.rabbitmq-log-stream.name}"
+         }
+      }
+   },
+   {
+      "name":"splinter",
+      "image":"nirooma/splinter:latest",
+      "cpu":10,
+      "command":[
+         "yarn",
+         "start"
+      ],
+      "memory":128,
+      "essential":true,
+      "environment":[
+
+      ],
+      "portMappings":[
+         {
+            "containerPort":3000
+         }
+      ],
+      "logConfiguration":{
+         "logDriver":"awslogs",
+         "options":{
+            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
+            "awslogs-region":"eu-central-1",
+            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.splinter-log-stream.name}"
+         }
+      }
+   },
+   {
+      "name":"nginx",
+      "image":"nirooma/nginx:latest",
+      "cpu":10,
+      "memory":128,
+      "links":[
+         "splinter",
+         "leonardo",
+         "rabbitmq"
+      ],
+      "essential":true,
+      "environment":[
+
+      ],
+      "portMappings":[
+         {
+            "containerPort":80
+         }
+      ],
+      "mountPoints":[
+         {
+            "containerPath":"/opt/leonardo/staticfiles",
+            "sourceVolume":"static_volume"
+         }
+      ],
+      "logConfiguration":{
+         "logDriver":"awslogs",
+         "options":{
+            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
+            "awslogs-region":"eu-central-1",
+            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.nginx-log-stream.name}"
          }
       }
    }

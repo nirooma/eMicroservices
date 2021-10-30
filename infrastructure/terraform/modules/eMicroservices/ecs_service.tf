@@ -1,11 +1,15 @@
 resource "aws_ecs_task_definition" "app" {
-  family                = "${var.environment_name}-app"
+  family = "${var.environment_name}-app"
+  volume {
+    name      = "static_volume"
+    host_path = "/opt/leonardo/staticfiles"
+  }
   container_definitions = <<EOF
 [
    {
       "name":"leonardo",
       "image":"nirooma/leonardo:latest",
-      "cpu":500,
+      "cpu":10,
       "command":[
          "daphne",
          "--bind",
@@ -14,7 +18,7 @@ resource "aws_ecs_task_definition" "app" {
          "8002",
          "core.asgi:application"
       ],
-      "memory":500,
+      "memory":512,
       "links":[
          "leonardo-db",
          "rabbitmq"
@@ -51,6 +55,12 @@ resource "aws_ecs_task_definition" "app" {
             "containerPort":8002
          }
       ],
+      "mountPoints":[
+         {
+            "containerPath":"/opt/leonardo/staticfiles",
+            "sourceVolume":"static_volume"
+         }
+      ],
       "logConfiguration":{
          "logDriver":"awslogs",
          "options":{
@@ -63,8 +73,8 @@ resource "aws_ecs_task_definition" "app" {
    {
       "name":"leonardo-db",
       "image":"postgres:13.4-alpine",
-      "cpu":500,
-      "memory":500,
+      "cpu":10,
+      "memory":256,
       "essential":true,
       "environment":[
          {
@@ -92,10 +102,12 @@ resource "aws_ecs_task_definition" "app" {
    {
       "name":"rabbitmq",
       "image":"rabbitmq:3.9.4-management",
-      "cpu":1000,
-      "memory":500,
+      "cpu":10,
+      "memory":256,
       "essential":true,
-      "environment":[],
+      "environment":[
+
+      ],
       "logConfiguration":{
          "logDriver":"awslogs",
          "options":{
@@ -108,7 +120,7 @@ resource "aws_ecs_task_definition" "app" {
    {
       "name":"splinter",
       "image":"nirooma/splinter:latest",
-      "cpu":100,
+      "cpu":10,
       "command":[
          "yarn",
          "start"
@@ -143,10 +155,18 @@ resource "aws_ecs_task_definition" "app" {
          "rabbitmq"
       ],
       "essential":true,
-      "environment":[],
+      "environment":[
+
+      ],
       "portMappings":[
          {
             "containerPort":80
+         }
+      ],
+      "mountPoints":[
+         {
+            "containerPath":"/opt/leonardo/staticfiles",
+            "sourceVolume":"static_volume"
          }
       ],
       "logConfiguration":{
@@ -175,8 +195,8 @@ resource "aws_ecs_service" "eMicroservices-service" {
 
   load_balancer {
     target_group_arn = var.aws_alb_target_group_arn
-    container_name   = "nginx" # Change back to nginx
-    container_port   = 80 # Change back to 80
+    container_name   = "nginx"
+    container_port   = 80
   }
   depends_on = [var.ecs_alb_http_listener]
 
