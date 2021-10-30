@@ -1,19 +1,19 @@
 data "template_file" "app" {
   template = file("containers.json.tpl")
   vars = {
-    aws_cloudwatch_log_group = aws_cloudwatch_log_group.gen-log-group.name
-    aws_cloudwatch_log_stream_nginx = aws_cloudwatch_log_stream.nginx-log-stream.name
-    aws_cloudwatch_log_stream_splinter = aws_cloudwatch_log_stream.splinter-log-stream.name
-    aws_cloudwatch_log_stream_rabbitmq = aws_cloudwatch_log_stream.rabbitmq-log-stream.name
+    aws_cloudwatch_log_group              = aws_cloudwatch_log_group.gen-log-group.name
+    aws_cloudwatch_log_stream_nginx       = aws_cloudwatch_log_stream.nginx-log-stream.name
+    aws_cloudwatch_log_stream_splinter    = aws_cloudwatch_log_stream.splinter-log-stream.name
+    aws_cloudwatch_log_stream_rabbitmq    = aws_cloudwatch_log_stream.rabbitmq-log-stream.name
     aws_cloudwatch_log_stream_leonardo-db = aws_cloudwatch_log_stream.leonardo-db-log-stream.name
-    aws_cloudwatch_log_stream_leonardo = aws_cloudwatch_log_stream.leonardo-log-stream.name
+    aws_cloudwatch_log_stream_leonardo    = aws_cloudwatch_log_stream.leonardo-log-stream.name
 
   }
 }
 
 
 resource "aws_ecs_task_definition" "app" {
-  family = "${var.environment_name}-app"
+  family                = "${var.environment_name}-app"
   container_definitions = data.template_file.app.rendered
 
   volume {
