@@ -94,4 +94,4 @@ RUN python manage.py collectstatic --noinput
 USER app
 
 # run entrypoint.prod.sh
-#ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
