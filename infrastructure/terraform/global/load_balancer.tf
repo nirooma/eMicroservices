@@ -14,6 +14,14 @@ resource "aws_alb_target_group" "default-target-group" {
   depends_on = [aws_lb.load_balancer]
 }
 
+resource "aws_alb_target_group" "rabbitmq-manager" {
+  name     = "${var.environment_name}-rabbitmq"
+  port     = 15672
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.eMicroservices-vpc.id
+
+}
+
 # Listener (redirects traffic from the load balancer to the target group)
 resource "aws_alb_listener" "ecs-alb-http-listener" {
   load_balancer_arn = aws_lb.load_balancer.id
