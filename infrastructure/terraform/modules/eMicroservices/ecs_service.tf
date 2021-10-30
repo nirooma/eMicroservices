@@ -15,9 +15,7 @@ resource "aws_ecs_task_definition" "app" {
          "core.asgi:application"
       ],
       "memory":500,
-      "links":[
-         "leonardo-db"
-      ],
+      "links":[],
       "essential":true,
       "environment":[
          {
@@ -56,35 +54,6 @@ resource "aws_ecs_task_definition" "app" {
             "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
             "awslogs-region":"eu-central-1",
             "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.splinter-log-stream.name}"
-         }
-      }
-   },
-   {
-      "name":"leonardo-db",
-      "image":"postgres:13.4-alpine:latest",
-      "cpu":500,
-      "memory":500,
-      "essential":true,
-      "environment":[
-         {
-            "name":"POSTGRES_DB",
-            "value":"fastapi"
-         },
-         {
-            "name":"POSTGRES_USER",
-            "value":"postgres"
-         },
-         {
-            "name":"POSTGRES_PASSWORD",
-            "value":"postgres"
-         }
-      ],
-      "logConfiguration":{
-         "logDriver":"awslogs",
-         "options":{
-            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
-            "awslogs-region":"eu-central-1",
-            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.leonardo-db-log-stream.name}"
          }
       }
    }
