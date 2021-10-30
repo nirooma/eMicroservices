@@ -11,7 +11,7 @@
          "8002",
          "core.asgi:application"
       ],
-      "memory":512,
+      "memory":256,
       "links":[
          "leonardo-db",
          "rabbitmq"
@@ -150,9 +150,6 @@
       "portMappings":[
          {
             "containerPort":80
-         },
-         {
-            "containerPort":15672
          }
       ],
       "mountPoints":[
