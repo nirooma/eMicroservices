@@ -23,3 +23,7 @@ variable "environment_name" {
   description = "Name of app environment. Must be unique."
   type        = string
 }
+variable "domain" {
+  description = "Domain for App"
+  type = string
+}
