@@ -96,13 +96,18 @@ resource "aws_ecs_task_definition" "app" {
     }
   }
  },
-  {
+ {
     "name": "rabbitmq",
-    "image": "rabbitmq:3.9.4-management:latest",
+    "image": "rabbitmq:3.9.4-management",
     "cpu": 1000,
     "memory": 950,
     "essential": true,
     "environment": [],
+    "portMappings": [
+      {
+        "containerPort": 15672
+      }
+    ],
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
@@ -111,7 +116,7 @@ resource "aws_ecs_task_definition" "app" {
         "awslogs-stream-prefix": "${aws_cloudwatch_log_stream.rabbitmq-log-stream.name}"
       }
     }
- },
+ }
 ]
 EOF
   lifecycle {
