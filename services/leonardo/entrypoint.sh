@@ -54,5 +54,6 @@ rabbitmq_ready
 echo "### Running migrations ###"
 python manage.py migrate
 echo "### Migrations running completed ###"
-python manage.py collectstatic --noinput
+ls
+ls staticfiles
 exec "$@"
