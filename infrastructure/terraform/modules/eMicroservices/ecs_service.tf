@@ -16,7 +16,8 @@ resource "aws_ecs_task_definition" "app" {
       ],
       "memory":500,
       "links":[
-          "leonardo-db"
+          "leonardo-db",
+          "rabbitmq"
       ],
       "essential":true,
       "environment":[
@@ -85,6 +86,22 @@ resource "aws_ecs_task_definition" "app" {
             "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
             "awslogs-region":"eu-central-1",
             "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.leonardo-db-log-stream.name}"
+         }
+      }
+   },
+   {
+      "name":"rabbitmq",
+      "image":"rabbitmq:3.9.4-management",
+      "cpu":1000,
+      "memory":500,
+      "essential":true,
+      "environment":[],
+      "logConfiguration":{
+         "logDriver":"awslogs",
+         "options":{
+            "awslogs-group":"${aws_cloudwatch_log_group.gen-log-group.name}",
+            "awslogs-region":"eu-central-1",
+            "awslogs-stream-prefix":"${aws_cloudwatch_log_stream.rabbitmq-log-stream.name}"
          }
       }
    }
