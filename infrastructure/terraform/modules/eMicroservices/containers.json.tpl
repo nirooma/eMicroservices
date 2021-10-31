@@ -50,8 +50,8 @@
       ],
       "mountPoints":[
          {
-            "containerPath":"/opt/leonardo/staticfiles",
-            "sourceVolume":"staticfiles"
+            "containerPath":"/usr/src/app/staticfiles",
+            "sourceVolume":"static_volume"
          }
       ],
       "logConfiguration":{
@@ -98,7 +98,9 @@
       "cpu":10,
       "memory":256,
       "essential":true,
-      "environment":[],
+      "environment":[
+
+      ],
       "logConfiguration":{
          "logDriver":"awslogs",
          "options":{
@@ -146,7 +148,9 @@
          "rabbitmq"
       ],
       "essential":true,
-      "environment":[],
+      "environment":[
+
+      ],
       "portMappings":[
          {
             "containerPort":80
@@ -154,8 +158,8 @@
       ],
       "mountPoints":[
          {
-            "containerPath":"/opt/leonardo/staticfiles",
-            "sourceVolume":"staticfiles"
+            "containerPath":"/usr/src/app/staticfiles",
+            "sourceVolume":"static_volume"
          }
       ],
       "logConfiguration":{

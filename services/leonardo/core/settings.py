@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-ki1#g20tvshh_*9^7^zb*r8$-q!c483l(4tobfluqc!l0wg*v)'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS_ACCESS = ["app.yallastam.com", "yallastam.com"]
 if DEBUG:
@@ -88,8 +88,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = '/staticfiles/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

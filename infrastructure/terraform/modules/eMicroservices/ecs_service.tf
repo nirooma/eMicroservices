@@ -17,8 +17,8 @@ resource "aws_ecs_task_definition" "app" {
   container_definitions = data.template_file.app.rendered
 
   volume {
-    name      = "staticfiles"
-    host_path = "/opt/leonardo/staticfiles/"
+    name      = "static_volume"
+    host_path = "/usr/src/app/staticfiles/"
   }
   lifecycle {
     ignore_changes = all
