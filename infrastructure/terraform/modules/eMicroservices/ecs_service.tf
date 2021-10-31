@@ -15,11 +15,7 @@ data "template_file" "app" {
 resource "aws_ecs_task_definition" "app" {
   family                = "${var.environment_name}-app"
   container_definitions = data.template_file.app.rendered
-
-  volume {
-    name      = "static_volume"
-    host_path = "/usr/src/app/staticfiles/"
-  }
+  
   lifecycle {
     ignore_changes = all
   }
