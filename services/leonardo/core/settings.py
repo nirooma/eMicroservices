@@ -7,7 +7,7 @@ SECRET_KEY = 'django-insecure-ki1#g20tvshh_*9^7^zb*r8$-q!c483l(4tobfluqc!l0wg*v)
 
 DEBUG = False
 
-ALLOWED_HOSTS_ACCESS = ["app.yallastam.com", "yallastam.com"]
+ALLOWED_HOSTS_ACCESS = ["*"]
 if DEBUG:
     ALLOWED_HOSTS_ACCESS = ["*"]
 
