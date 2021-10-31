@@ -67,10 +67,8 @@ RUN apt-get update \
   && apt-get clean
 
 # create directory for the app user
-#WORKDIR $HOME
+WORKDIR $HOME
 #RUN mkdir $APP_HOME/staticfiles
-# set work directory
-WORKDIR /usr/src/app
 
 # create the app user
 RUN addgroup --system app && adduser --system --group app
@@ -82,8 +80,7 @@ RUN pip install --upgrade pip
 RUN pip install --no-cache /wheels/*
 
 # copy project
-#COPY . $HOME
-COPY . .
+COPY . $HOME
 
 # collect static files
 RUN python manage.py collectstatic --no-input
@@ -92,8 +89,7 @@ RUN sed -i 's/\r$//g'  ./entrypoint.sh
 RUN chmod +x  ./entrypoint.sh
 
 # chown all the files to the app user
-RUN #chown -R app:app $HOME
-RUN chown -R app:app .
+RUN chown -R app:app $HOME
 
 
 # change to the app user
