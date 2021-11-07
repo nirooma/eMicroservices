@@ -41,5 +41,5 @@ resource "aws_alb_listener" "ecs-alb-https-listener" {
     type             = "forward"
     target_group_arn = aws_alb_target_group.default-target-group.arn
   }
-  certificate_arn = "arn:aws:acm:eu-central-1:096061951195:certificate/b81b21cd-c7ae-4223-8bb8-eb1d77ebd134"
+  certificate_arn = "arn:aws:acm:eu-central-1:096061951195:certificate/0d0df6e0-0999-4e55-ab79-3ebef35d6026"
 }
