@@ -2,7 +2,7 @@ module "global" {
   source = "./global"
 
   environment_name = var.environment_name
-  domain = "dev.yallastam.com"
+  domain = "dev.auroatech.com"
 }
 
 module "eMicroservices" {
