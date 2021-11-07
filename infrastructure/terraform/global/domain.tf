@@ -1,9 +1,9 @@
-#resource "aws_route53_zone" "primary" {
-#  name = "yallastam.com"
-#}
+resource "aws_route53_zone" "primary" {
+  name = "yallastam.com"
+}
 
 resource "aws_route53_record" "app" {
-  zone_id = Z05551602NDS256A9726H
+  zone_id = aws_route53_zone.primary.zone_id
   name    = var.domain
   type    = "A"
 

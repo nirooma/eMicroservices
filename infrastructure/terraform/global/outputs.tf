@@ -28,6 +28,6 @@ output "aws_alb_target_group_arn" {
 output "ecs_alb_http_listener" {
   value = aws_alb_listener.ecs-alb-http-listener
 }
-#output "domain_zone_id" {
-#  value = aws_route53_zone.primary.zone_id
-#}
+output "domain_zone_id" {
+  value = aws_route53_zone.primary.zone_id
+}
