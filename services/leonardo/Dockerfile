@@ -88,12 +88,5 @@ RUN python manage.py collectstatic --no-input
 RUN sed -i 's/\r$//g'  ./entrypoint.sh
 RUN chmod +x  ./entrypoint.sh
 
-# chown all the files to the app user
-#RUN chown -R app:app $HOME
-
-
-# change to the app user
-#USER app
-
 # run entrypoint.prod.sh
 ENTRYPOINT ["./entrypoint.sh"]
