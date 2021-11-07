@@ -48,6 +48,12 @@
             "containerPort":8002
          }
       ],
+      "mountPoints":[
+         {
+            "containerPath":"/opt/leonardo/staticfiles/",
+            "sourceVolume":"static_volume"
+         }
+      ],
       "logConfiguration":{
          "logDriver":"awslogs",
          "options":{
@@ -148,6 +154,12 @@
       "portMappings":[
          {
             "containerPort":80
+         }
+      ],
+      "mountPoints":[
+         {
+            "containerPath":"/opt/leonardo/staticfiles/",
+            "sourceVolume":"static_volume"
          }
       ],
       "logConfiguration":{

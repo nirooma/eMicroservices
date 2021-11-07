@@ -1,6 +1,6 @@
 data "template_file" "app" {
   template = file("modules/eMicroservices/containers.json.tpl")
-  vars = {
+  vars     = {
     aws_cloudwatch_log_group              = aws_cloudwatch_log_group.gen-log-group.name
     aws_cloudwatch_log_stream_nginx       = aws_cloudwatch_log_stream.nginx-log-stream.name
     aws_cloudwatch_log_stream_splinter    = aws_cloudwatch_log_stream.splinter-log-stream.name
@@ -15,7 +15,10 @@ data "template_file" "app" {
 resource "aws_ecs_task_definition" "app" {
   family                = "${var.environment_name}-app"
   container_definitions = data.template_file.app.rendered
-  
+  volume {
+    name      = "static_volume"
+    host_path = "/opt/leonardo/staticfiles/"
+  }
   lifecycle {
     ignore_changes = all
   }
