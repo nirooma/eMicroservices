@@ -82,9 +82,6 @@ RUN pip install --no-cache /wheels/*
 # copy project
 COPY . $HOME
 
-# collect static files
-RUN python manage.py collectstatic --no-input
-
 RUN sed -i 's/\r$//g'  ./entrypoint.sh
 RUN chmod +x  ./entrypoint.sh
 
