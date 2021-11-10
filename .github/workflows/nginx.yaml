@@ -21,8 +21,8 @@ jobs:
       - uses: Gr1N/setup-poetry@v7
         with:
           poetry-version: 1.1.7
-      - name: Print all tests
-        run: echo ${GITHUB_HEAD_REF}
+      - name: Branch name
+        run: echo running on branch ${GITHUB_REF##*/}
 
 
       - name: Set up Python 3.9
