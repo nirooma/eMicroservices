@@ -35,7 +35,7 @@ jobs:
       - name: Docker Image Build
         run: |
           cd infrastructure/nginx
-          docker build --cache-from $NGINX_IMAGE_NAME_IN_DOCKERHUB:latest --tag $NGINX_IMAGE_NAME_IN_DOCKERHUB:latest --build-arg BUILDKIT_INLINE_CACHE=1 .
+          docker build --cache-from $NGINX_IMAGE_NAME_IN_DOCKERHUB:${GITHUB_REF##*/} --tag $NGINX_IMAGE_NAME_IN_DOCKERHUB:${GITHUB_REF##*/} --build-arg BUILDKIT_INLINE_CACHE=1 .
       - name: Log in to Docker Hub
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
         env:
@@ -43,4 +43,4 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Push to Docker Hub
-        run: docker push $NGINX_IMAGE_NAME_IN_DOCKERHUB
+        run: docker push $NGINX_IMAGE_NAME_IN_DOCKERHUB:${GITHUB_REF##*/}
