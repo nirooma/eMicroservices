@@ -25,6 +25,8 @@ jobs:
         run: echo running on branch ${GITHUB_REF##*/}
       - name: Branch name2
         run: echo running on branch ${GITHUB_REF}
+      - name: Branch name3
+        run: echo running on branch ${GITHUB_REF_NAME}
 
 
       - name: Set up Python 3.9
