@@ -26,12 +26,11 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Extract Docker metadata
-        id: Meta
+        id: meta
         uses: docker/metadata-action@v3
         with:
           images: ${{ secrets.MICHALANGELO_IMAGE_NAME_IN_DOCKERHUB }}
 
       - name: Test Outputs
-        run: |
-            echo ${{ steps.Meta.outputs.tags }}
-            echo ${{ steps.meta.outputs.labels }}
+        run: echo ${{ steps.meta.outputs.tags }}
+
