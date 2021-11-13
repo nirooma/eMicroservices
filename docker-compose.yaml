@@ -154,7 +154,7 @@ services:
             - '3000:3000'
         volumes:
             - ./services/splinter:/opt/splinter
-            - /opt/splinter/node_modules
+            - ./services/splinter/node_modules:/opt/splinter/node_modules
 
     ################# kimberly ##################
     kimberly:
