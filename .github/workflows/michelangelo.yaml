@@ -34,6 +34,5 @@ jobs:
       - name: Test Outputs
         run: echo ${{ steps.meta.outputs.labels }}
 
-
-
-#            echo ${{ steps.meta.outputs.tags }}
+      - name: Test Outputs
+        run: echo ${{ steps.meta.outputs.tags }}
