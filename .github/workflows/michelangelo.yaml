@@ -29,6 +29,7 @@ jobs:
 
       - name: Run Pytest
         run: |
+          cd services/michelangelo
           poetry run pytest -rP
 
   build:
