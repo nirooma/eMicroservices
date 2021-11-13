@@ -7,6 +7,12 @@ on:
     paths:
       - 'services/michelangelo/**'
       - '.github/workflows/michelangelo.yaml'
+  pull_request:
+    branches: [main ]
+    paths:
+      - 'services/michelangelo/**'
+      - '.github/workflows/michelangelo.yaml'
+
 
 env:
   DOCKER_BUILDKIT: 1
