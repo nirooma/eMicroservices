@@ -37,6 +37,6 @@ jobs:
         with:
           context: services/michelangelo
           push: true
-          tags: ${{ secrets.MICHALANGELO_IMAGE_NAME_IN_DOCKERHUB }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
