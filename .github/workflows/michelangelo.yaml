@@ -25,13 +25,14 @@ jobs:
       - name: Install dependencies
         run: |
           cd services/michelangelo
-          poetry add pylint
+          poetry install
 
-      - name: Analysing the code with pylint
+      - name: Run Pytest
         run: |
-          poetry run pylint `ls -R|grep .py$|xargs`
+          poetry run pytest -rP
 
   build:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
