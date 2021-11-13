@@ -20,8 +20,9 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+      - name: Install Poetry
         uses: Gr1N/setup-poetry@v7
+      - name: Install dependencies
         run: |
           poetry add pylint
 
