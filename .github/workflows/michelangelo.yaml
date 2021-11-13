@@ -1,4 +1,4 @@
-name: Building Michelangelo Workflow
+name: Michelangelo Workflow
 
 on:
   push:
