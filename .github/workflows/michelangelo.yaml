@@ -6,7 +6,7 @@ on:
       - [ main ]:
     paths:
       - 'services/michelangelo/**'
-      - '.github/workflows/michelangelo.yaml''
+      - '.github/workflows/michelangelo.yaml'
 
 env:
   DOCKER_BUILDKIT: 1
@@ -31,5 +31,7 @@ jobs:
         with:
           images: ${{ secrets.MICHALANGELO_IMAGE_NAME_IN_DOCKERHUB }}
 
-#      - name: Test Outputs
-#        run: echo ${{ steps.Meta.outputs.tags }}
+      - name: Test Outputs
+        run: |
+            echo ${{ steps.Meta.outputs.tags }}
+            echo ${{ steps.meta.outputs.labels }}
