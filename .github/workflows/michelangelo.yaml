@@ -43,7 +43,7 @@ jobs:
           poetry run pytest -rP
 
   build:
-    if: ${{ github.event_name != 'pull_request' }}
+    if: ${{ github.event_name == 'push' }}
     needs: test
     runs-on: ubuntu-latest
     steps:
