@@ -7,6 +7,11 @@ on:
     paths:
       - 'services/michelangelo/**'
       - '.github/workflows/michelangelo.yaml'
+  pull_request:
+    branches: [ main, release/** ]
+    paths:
+      - 'services/michelangelo/**'
+      - '.github/workflows/michelangelo.yaml'
 
 jobs:
   test:
@@ -38,24 +43,22 @@ jobs:
           poetry run pytest -rP
 
   build:
+    if: ${{ github.event_name != 'pull_request' }}
     needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v3
         with:
           images: ${{ secrets.MICHALANGELO_IMAGE_NAME_IN_DOCKERHUB }}
-
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
