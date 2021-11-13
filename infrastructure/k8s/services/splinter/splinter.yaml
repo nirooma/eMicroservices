@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: splinter-deployment
+  name: splinter-depl
   labels:
     app: splinter
 spec:
@@ -14,20 +14,19 @@ spec:
     spec:
       containers:
         - name: splinter
-          image: nirooma/splinter:latest
+          image: nirooma/splinter:main
           imagePullPolicy: Always
-          command: [ "sh", "-c" ]
-          args: [ "npm run dev" ]
       restartPolicy: Always
   selector:
     matchLabels:
       app: splinter
 
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: splinter-service
+  name: splinter-svc
 spec:
   selector:
     app: splinter
