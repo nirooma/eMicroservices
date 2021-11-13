@@ -2,7 +2,7 @@ name: Building Michelangelo Workflow
 
 on:
   push:
-    branches:  [ main ]
+#    branches:  [ main ]
     tags: [ 'v*.*.*' ]
     paths:
       - 'services/michelangelo/**'
@@ -30,9 +30,6 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ${{ secrets.MICHALANGELO_IMAGE_NAME_IN_DOCKERHUB }}
-
-      - name: Test Outputs
-        run: echo ${{ steps.meta.outputs.labels }}
 
       - name: Test Outputs
         run: echo ${{ steps.meta.outputs.tags }}
