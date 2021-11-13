@@ -1,54 +1,39 @@
-on:
-    push:
-      branches:
-        - main
-      paths:
-        - 'services/tommy/**'
-        - '.github/workflows/tommy.yaml'
+name: Tommy Workflow
 
-env:
-  DOCKER_BUILDKIT: 1
-  TOMMY_IMAGE_NAME_IN_DOCKERHUB: ${{ secrets.TOMMY_IMAGE_NAME_IN_DOCKERHUB }}
+on:
+  push:
+    branches: [ main, release/** ]
+    tags: [ 'v*.*.*' ]
+    paths:
+      - 'workers/tommy/**'
+      - '.github/workflows/tommy.yaml'
 
 jobs:
   build:
-    name: Test Docker Image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: Gr1N/setup-poetry@v7
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
         with:
-          poetry-version: 1.1.7
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v2
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v3
         with:
-          python-version: 3.9
+          images: ${{ secrets.TOMMY_IMAGE_NAME_IN_DOCKERHUB }}
 
-      - name: Install dependencies
-        run: |
-          cd workers/tommy
-          poetry install
-#      - name: Lint with flake8, black and isort
-#        run: |
-#          cd services/resources
-#          black --exclude=migrations .
-#          isort .
-#          flake8 .
-#      - name: Test with pytest
-#        run: |
-#          cd services/donatello
-#          pytest -p no:warnings --cov=.
-      - name: Docker Image Build
-        run: |
-          cd workers/tommy
-          docker build --cache-from $TOMMY_IMAGE_NAME_IN_DOCKERHUB:latest --tag $TOMMY_IMAGE_NAME_IN_DOCKERHUB:latest --build-arg BUILDKIT_INLINE_CACHE=1 .
-      - name: Log in to Docker Hub
-        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Push to Docker Hub
-        run: docker push $TOMMY_IMAGE_NAME_IN_DOCKERHUB
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: services/michelangelo
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ steps.meta.outputs.tags }}
+          cache-to: type=inline
