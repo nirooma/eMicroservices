@@ -31,5 +31,5 @@ jobs:
         with:
           images: ${{ secrets.MICHALANGELO_IMAGE_NAME_IN_DOCKERHUB }}
 
-      - name: Test Outputs
-        run: echo ${{ steps.Meta.outputs.tags }}
+#      - name: Test Outputs
+#        run: echo ${{ steps.Meta.outputs.tags }}
