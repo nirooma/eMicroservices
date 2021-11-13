@@ -142,8 +142,11 @@ services:
 
     ############### splinter ###################
     splinter:
-        image: nirooma/splinter:latest # M1 issue
+#        image: nirooma/splinter:latest # M1 issue
         #    build: ./services/splinter
+        build:
+            context: ./services/splinter
+            dockerfile: Dockerfile.dev
         command: yarn run dev
         container_name: splinter
         environment: *common-variables
