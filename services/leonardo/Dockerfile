@@ -68,7 +68,7 @@ RUN apt-get update \
 
 # create directory for the app user
 WORKDIR $HOME
-RUN mkdir $APP_HOME/staticfiles
+#RUN mkdir $APP_HOME/staticfiles
 
 # create the app user
 RUN addgroup --system app && adduser --system --group app
@@ -84,14 +84,6 @@ COPY . $HOME
 
 RUN sed -i 's/\r$//g'  ./entrypoint.sh
 RUN chmod +x  ./entrypoint.sh
-
-# chown all the files to the app user
-RUN chown -R app:app $HOME
-
-RUN python manage.py collectstatic --noinput
-
-# change to the app user
-USER app
 
 # run entrypoint.prod.sh
 ENTRYPOINT ["./entrypoint.sh"]
