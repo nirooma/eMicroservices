@@ -1,1 +1,1 @@
-export const MICHELANGELO = 'https://localhost:8001';
+export const MICHELANGELO = 'http://localhost:8001';

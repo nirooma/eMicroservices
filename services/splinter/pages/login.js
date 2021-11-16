@@ -8,7 +8,7 @@ const LoginPage = () => {
     const { register, handleSubmit, errors } = useForm();
 
     const onSubmit = async (data) => {
-        const res = await postData(`${MICHELANGELO}/api/login`, {
+        const res = await postData(`${MICHELANGELO}/api/accounts/login`, {
             email: data.email,
             password: data.password,
         });
