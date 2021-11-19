@@ -161,7 +161,7 @@ services:
         container_name: kimberly
         environment: *common-variables
         env_file:
-            - '/Users/nirmansour/.pems/eMicroservices.txt'
+            - '/Users/tomerlevi/.pems/eMicroservices.txt'
         volumes:
             - ./workers/kimberly:/opt/kimberly
         depends_on:
