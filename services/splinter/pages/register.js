@@ -12,7 +12,7 @@ const RegisterPage = () => {
         const isEmail = validator.isEmail(email);
         const isPassword = validator.isStrongPassword(password);
         if (isEmail && isPassword) {
-            await postData(`${MICHELANGELO}/accounts/register`, {
+            await postData(`${MICHELANGELO}/api/accounts/register`, {
                 username: email,
                 email: email,
                 password: password,

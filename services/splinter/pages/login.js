@@ -8,10 +8,14 @@ const LoginPage = () => {
     const { register, handleSubmit, errors } = useForm();
 
     const onSubmit = async (data) => {
-        const res = await postData(`${MICHELANGELO}/api/accounts/login`, {
-            email: data.email,
-            password: data.password,
-        });
+        await postData(
+            `${MICHELANGELO}/api/accounts/login`,
+            {
+                username: data.username,
+                password: data.password,
+            },
+            { auth: true }
+        );
     };
 
     return (
@@ -41,27 +45,25 @@ const LoginPage = () => {
                             <div className="form__input-row">
                                 <input
                                     className="form__input"
-                                    placeholder="email"
+                                    placeholder="username"
                                     type="text"
-                                    name="email"
+                                    name="username"
                                     ref={register({
                                         required: true,
-                                        pattern:
-                                            /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
                                     })}
                                 />
 
-                                {errors.email &&
-                                    errors.email.type === 'required' && (
+                                {errors.username &&
+                                    errors.username.type === 'required' && (
                                         <p className="message message--error">
                                             This field is required
                                         </p>
                                     )}
 
-                                {errors.email &&
-                                    errors.email.type === 'pattern' && (
+                                {errors.username &&
+                                    errors.username.type === 'pattern' && (
                                         <p className="message message--error">
-                                            Please write a valid email
+                                            Username doesn't exists
                                         </p>
                                     )}
                             </div>
